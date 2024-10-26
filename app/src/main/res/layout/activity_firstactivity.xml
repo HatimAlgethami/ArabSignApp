@@ -1,0 +1,87 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    style="@style/screenColor"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layoutDirection="rtl"
+        android:gravity="right">
+
+
+        <ImageView
+            style="@style/MainViewStyle"
+            android:id="@+id/logo"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/question1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="من نحن؟"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/answer1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="تطبيق ArabSign تم تطويره لمساعدة مجتمع الصم من خلال ترجمة لغة الإشارة العربية (ArSL) ولغة الإشارة الأمريكية (ASL) إلى اللغة العربية المنطوقة والمكتوبة باستخدام نظام التعرف على الإيماءات من خلال الكاميرا."
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/question2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ما أهمية هذا التطبيق للناس الصم؟"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/answer2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="يساعد هذا التطبيق في سد فجوة التواصل لدى مجتمع الصم من خلال ترجمة الإيماءات الخاصة بهم إلى اللغة العربية المنطوقة في الوقت الفعلي، مما يسمح لهم بالتواصل مع من لا يفهمون لغة الإشارة."
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/question3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ما هو الفرق بين ASL و ArSL؟"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/answer3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="لغة الإشارة الأمريكية (ASL) هي لغة الإشارة المستخدمة في الولايات المتحدة وأجزاء من كندا، بينما تستخدم لغة الإشارة العربية (ArSL) في مجتمع الصم الناطقين باللغة العربية. يقوم تطبيق ArabSign بترجمة كل من ASL و ArSL إلى اللغة العربية المكتوبة والمنطوقة."
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <Button
+            style="@style/button"
+            android:id="@+id/createAccountBtn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="الانتقال الى تسجيل الدخول"
+            android:textSize="24sp"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+
+</ScrollView>

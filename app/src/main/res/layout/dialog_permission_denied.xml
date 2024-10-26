@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="8dp"
+    android:paddingVertical="16dp"
+    android:layout_margin="32dp"
+    android:layout_gravity="center"
+    android:gravity="end"
+    style="@style/dialogbackground"
+    >
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="20sp"
+        android:fontFamily="@font/gothic_a1"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:text="نحتاج للوصول إلى الكاميرا للتعرف على لغة الإشارة"
+        android:paddingBottom="10dp"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        >
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/denied_return_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="الرجوع"
+            android:background="@drawable/button_background1"
+            android:layout_marginRight="16dp"
+            >
+
+        </androidx.appcompat.widget.AppCompatButton>
+<!--        <androidx.appcompat.widget.AppCompatButton-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="السماح"-->
+<!--        android:textColor="@color/white"-->
+<!--        android:onClick="reRequestCamera"-->
+<!--        style="@style/dialogconfirmbutton"-->
+<!--        >-->
+
+<!--        </androidx.appcompat.widget.AppCompatButton>-->
+    </LinearLayout>
+
+</LinearLayout>

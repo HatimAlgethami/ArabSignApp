@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "275543207422",
+    "firebase_url": "https://arab-sign-default-rtdb.firebaseio.com",
+    "project_id": "arab-sign",
+    "storage_bucket": "arab-sign.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:275543207422:android:d6b6e23c3a4722c69b64af",
+        "android_client_info": {
+          "package_name": "com.example.arabsignapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZfxpdM2dIGdLDKdEMn8mlqPPowB-mORc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

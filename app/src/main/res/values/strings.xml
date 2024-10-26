@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="title_activity_home">HomeActivity</string>
+
+    <string name="conv_end">إنهاء المحادثة</string>
+    <string name="title_translate">الترجمة</string>
+    <string name="translation_default">تظهر الترجمة هنا</string>
+    <string name="camera_default">تظهر الكاميرا هنا</string>
+
+    <string name="input_dialog_ok">تأكيد</string>
+    <string name="input_dialog_cancel">إلغاء</string>
+
+    <string name="save_dialog_ok">حفظ</string>
+    <string name="save_dialog_cancel">تجاهل</string>
+
+
+    <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_home">الرئيسية</string>
+    <string name="title_chat">المحادثات</string>
+    <string name="title_profile">الملف الشخصي</string>
+    <string name="start">بدء المحادثة</string>
+    <string name="Greeting">مرحبا, محمد </string>
+
+    <string name="title_activity_history">HistoryActivity</string>
+
+    <string name="night_mode_option">تفعيل الوضع الليلي</string>
+    <string name="font_size_option">نوع الخط</string>
+    <string name="font_size_hint">استخدم الوضع الإفتراضي</string>
+    <string name="feedback_button">إرسال الرأي</string>
+    <string name="logout_button">تسجيل الخروج</string>
+
+</resources>

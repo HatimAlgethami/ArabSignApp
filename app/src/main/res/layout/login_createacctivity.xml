@@ -1,0 +1,40 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="16dp"
+    style="@style/screenColor"
+    >
+
+    <!-- Logo at the top -->
+    <ImageView
+        style="@style/MainViewStyle"
+        android:id="@+id/appLogo"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        />
+
+
+
+
+    <Button
+        style="@style/button"
+        android:id="@+id/createAccountBtn"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:text="إنشاء حساب"
+        android:textSize="24sp"
+        android:layout_marginTop="24dp"
+        />
+
+    <Button
+        style="@style/button"
+        android:id="@+id/loginBtn"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:text="تسجيل الدخول"
+        android:textSize="24sp"
+        android:layout_marginTop="16dp"
+        />
+</LinearLayout>

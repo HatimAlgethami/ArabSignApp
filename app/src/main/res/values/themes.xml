@@ -1,0 +1,54 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.MyApplication" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/white</item>
+    </style>
+
+    <style name="MainViewStyle">
+        <item name="android:src">@drawable/light_arab_sign_logo</item>
+    </style>
+
+    <style name="screenColor">
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="button">
+        <item name="backgroundTint">#130101</item>
+    </style>
+    <style name="fancybutton">
+        <item name="backgroundTint">#024CAA</item>
+    </style>
+    <style name="menu">
+        <item name="android:background">#D9D9D9</item>
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorAccent">@color/black</item>
+    </style>
+    <style name="imageradius">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50dp</item>
+    </style>
+    <style name="dialogbackground">
+        <item name="android:background">@drawable/dialog_background</item>
+    </style>
+    <style name="dialogconfirmbutton">
+        <item name="backgroundTint">@color/black</item>
+        <item name="strokeColor">@color/black</item>
+    </style>
+    <style name="dialogradius">
+        <item name="dialogCornerRadius">16dp</item>
+    </style>
+
+        <style name="ImageCircle" parent="Widget.MaterialComponents.ShapeableImageView">
+            <item name="shapeAppearanceOverlay">@style/CircleShape</item>
+        </style>
+
+        <style name="CircleShape">
+            <item name="cornerFamily">rounded</item>
+            <item name="cornerSize">50%</item>
+        </style>
+
+
+</resources>
