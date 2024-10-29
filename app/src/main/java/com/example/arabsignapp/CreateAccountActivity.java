@@ -86,7 +86,11 @@ public class CreateAccountActivity extends AppCompatActivity {
         fsdb.document("users/"+FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .set(newUserData).addOnCompleteListener(task -> {
                     if (task.isSuccessful()){
+                        if (mAuth.getCurrentUser()!=null){
+                            mAuth.signOut();
+                        }
                         startActivity(intent);
+                        finish();
                     }
                     else{
                         Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();

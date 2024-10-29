@@ -7,7 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SharedUtils {
 
-    public static void setUserGreeting(TextView tv,String extraString){
+    public static void setUserGreeting(TextView tv){
         FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
         fsdb.collection("users")
                 .document(""+ FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -18,13 +18,12 @@ public class SharedUtils {
 
                     if (value!=null && value.exists()){
                         CharSequence greeting = value.getString("username");
-                        tv.setText(extraString+" ");
                         tv.append(greeting);
                     }
                 });
     }
 
-    public static void setUserGreeting(TextView tv){
+    public static void setUserProfileName(TextView tv){
         FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
         fsdb.collection("users")
                 .document(""+ FirebaseAuth.getInstance().getCurrentUser().getUid())

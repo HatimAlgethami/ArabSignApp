@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -39,7 +40,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationBar
             else{
                 selectedFragment = navigationBar_v.getMenu().size()-1;
             }
-            onNavigationItemSelected(navigationBar_v.getMenu().getItem(selectedFragment));
+            addFirstFragment();
        }
         catch (Exception e){
         }
@@ -48,6 +49,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationBar
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        findSelectedFragment(navigationBar_v.getSelectedItemId());
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt("selectedFragment",selectedFragment).apply();
     }
@@ -75,5 +77,40 @@ public class UserMainActivity extends AppCompatActivity implements NavigationBar
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.main_view, fragment).addToBackStack("custom").setReorderingAllowed(true);
         ft.commit();
+    }
+
+    private void addFirstFragment(){
+        findSelectedFragment(navigationBar_v.getSelectedItemId());
+        Fragment fragment;
+        switch (selectedFragment){
+            case 2:
+                fragment = new HomeFragment();
+                break;
+            case 1:
+                fragment = new HistoryFragment();
+                break;
+            case 0:
+                fragment = new ProfileFragment();
+                break;
+            default:
+                return;
+        }
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.main_view, fragment).setReorderingAllowed(true);
+        ft.commit();
+    }
+
+    private void findSelectedFragment(int fragId){
+        if(fragId == R.id.navigation_home){
+            selectedFragment = 2;
+        }
+        else if(fragId == R.id.navigation_chat) {
+            selectedFragment = 1;
+        }
+        else if(fragId == R.id.navigation_profile){
+            selectedFragment = 0;
+        }
     }
 }

@@ -18,7 +18,6 @@ import android.widget.Button;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -93,6 +92,7 @@ public class ProfileFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), LoginCreatAccActivity.class);
                 FirebaseAuth.getInstance().signOut();
                 getActivity().startActivity(intent);
+                getActivity().finish();
             });
 
             MaterialSwitch ms = getView().findViewById(R.id.modeswitch);
@@ -111,7 +111,7 @@ public class ProfileFragment extends Fragment {
                 AppCompatDelegate.setDefaultNightMode(newMode);
 
             });
-            SharedUtils.setUserGreeting(getView().findViewById(R.id.usrnm));
+            SharedUtils.setUserProfileName(getView().findViewById(R.id.usrnm));
         }
 
         catch (NullPointerException ignored){

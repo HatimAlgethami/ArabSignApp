@@ -37,6 +37,7 @@ public class LoginCreatAccActivity extends AppCompatActivity {
         if (fbusr!=null){
             Intent intent = new Intent(this, UserMainActivity.class);
             startActivity(intent);
+            finish();
         }
     }
 }
