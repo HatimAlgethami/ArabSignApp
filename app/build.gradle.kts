@@ -37,36 +37,57 @@ android {
 }
 
 dependencies {
-    implementation("com.google.firebase:firebase-firestore-ktx:24.0.0")
+    // Firebase dependencies
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+    implementation("com.google.firebase:firebase-firestore-ktx:24.0.0")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-database-ktx:20.3.0")
+
+    // MediaPipe Vision Tasks (only include what's necessary)
+    implementation("com.google.mediapipe:tasks-vision:0.10.2")
+
+    // Android libraries and UI components
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
-}
-dependencies {
+
+    // Android CameraX
     implementation("androidx.camera:camera-core:1.2.0")
     implementation("androidx.camera:camera-camera2:1.2.0")
     implementation("androidx.camera:camera-lifecycle:1.2.0")
-    implementation("androidx.camera:camera-view:1.2.0") // Optional for a CameraView
+    implementation("androidx.camera:camera-view:1.2.0")
+
+    // Navigation and Guava for concurrency
     implementation(libs.navigation.ui)
     implementation(libs.navigation.fragment)
     implementation("com.google.guava:guava:31.0.1-android")
-
-    // To use CallbackToFutureAdapter
     implementation("androidx.concurrent:concurrent-futures:1.2.0")
 
-    // Kotlin
+    // Kotlin coroutines for Guava
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-guava:1.6.0")
+
+    // Testing libraries
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+
+    // MediaPipe Hands for hand tracking
+    implementation("com.google.mediapipe:tasks-vision-handlandmarker:0.10.2")
+
+    // MediaPipe Pose for body/pose tracking
+    implementation("com.google.mediapipe:tasks-vision-poselandmarker:0.10.2")
+
+    // MediaPipe Face for face tracking
+    implementation("com.google.mediapipe:tasks-vision-facelandmarker:0.10.2")
 }
 
 buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
     dependencies {
-        classpath("com.google.gms:google-services:4.3.15") // Ensure this line is present
+        classpath("com.google.gms:google-services:4.3.15")
     }
 }
