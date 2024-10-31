@@ -102,8 +102,7 @@ public class HomeFragment extends Fragment {
         navigationBar_v.getMenu().findItem(R.id.navigation_home).setChecked(true);
         Button btn = getView().findViewById(R.id.start);
         btn.setOnClickListener(v-> popupHm());
-        String arabicGreeting = "\u202B"+"مرحبا, "+"\u202C";
-        SharedUtils.setUserGreeting(getView().findViewById(R.id.greetingText),arabicGreeting);
+        SharedUtils.setUserGreeting(getView().findViewById(R.id.greetingText));
     }
 
 }

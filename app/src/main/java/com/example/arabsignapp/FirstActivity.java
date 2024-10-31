@@ -35,9 +35,10 @@ public class FirstActivity extends AppCompatActivity {
 
         }
 
-        if (!sharedPref.getBoolean("selectedDark",true)){
+        if (!sharedPref.getBoolean("firstLaunch",true)){
             Intent intent = new Intent(FirstActivity.this, LoginCreatAccActivity.class);
             startActivity(intent);
+            finish();
         }
 
 
@@ -53,6 +54,7 @@ public class FirstActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(FirstActivity.this, LoginCreatAccActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }
