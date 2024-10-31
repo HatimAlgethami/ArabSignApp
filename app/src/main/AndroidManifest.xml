@@ -39,6 +39,7 @@
             android:name=".CreateAccountActivity"
             android:exported="true">
         </activity>
+        <activity android:name=".ResetPasswordActivity" />
 
         <activity
             android:name=".LoginCreatAccActivity"

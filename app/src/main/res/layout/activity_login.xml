@@ -47,12 +47,11 @@
             app:layout_constraintWidth_percent="0.9" />
 
         <!-- Reset Password TextView -->
-        <TextView
-            android:id="@+id/reset_password_textview"
+        <Button
+            android:id="@+id/reset_password_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="نسيت كلمة المرور؟"
-            android:layoutDirection="rtl"
             android:textSize="18sp"
             android:layout_marginTop="20dp"
             android:layout_gravity="end"
@@ -69,7 +68,7 @@
             style="@style/MainViewStyle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/reset_password_textview"
+            app:layout_constraintTop_toBottomOf="@id/reset_password_button"
             app:layout_constraintBottom_toTopOf="@id/createAccountBtn" />
 
         <!-- Create Account Button -->

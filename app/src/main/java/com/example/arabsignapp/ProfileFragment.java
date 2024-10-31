@@ -117,6 +117,45 @@ public class ProfileFragment extends Fragment {
         catch (NullPointerException ignored){
 
         }
+
+        //
+
+        try {
+            NavigationBarView navigationBar_v = getActivity().findViewById(R.id.nav_view);
+            navigationBar_v.getMenu().findItem(R.id.navigation_profile).setChecked(true);
+            sharedPref = getActivity().getSharedPreferences("appPref", 0);
+
+            // Set up feedback button to navigate to sendFeedbackFragment
+            Button feedbackButton = view.findViewById(R.id.btn_feedback);
+            feedbackButton.setOnClickListener(v -> {
+                getParentFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.main_view, new sendFeedbackFragment())
+                        .addToBackStack(null)
+                        .commit();
+            });
+
+            Button logoutButton = view.findViewById(R.id.btn_logout);
+            logoutButton.setOnClickListener(v -> {
+                sharedPref.edit().putInt("selectedFragment", 2).apply();
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(getActivity(), LoginCreatAccActivity.class));
+                getActivity().finish();
+            });
+
+            MaterialSwitch ms = view.findViewById(R.id.modeswitch);
+            setIsNightMode();
+            ms.setChecked(isNightMode);
+            ms.setOnClickListener((v) -> {
+                int newMode = ms.isChecked() ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
+                sharedPref.edit().putBoolean("selectedDark", ms.isChecked()).apply();
+                AppCompatDelegate.setDefaultNightMode(newMode);
+            });
+
+            SharedUtils.setUserProfileName(view.findViewById(R.id.usrnm));
+        } catch (NullPointerException ignored) {
+        }
+        //
         super.onViewCreated(view, savedInstanceState);
     }
 
