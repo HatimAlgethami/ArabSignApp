@@ -72,14 +72,6 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-    // MediaPipe Hands for hand tracking
-    implementation("com.google.mediapipe:tasks-vision-handlandmarker:0.10.2")
-
-    // MediaPipe Pose for body/pose tracking
-    implementation("com.google.mediapipe:tasks-vision-poselandmarker:0.10.2")
-
-    // MediaPipe Face for face tracking
-    implementation("com.google.mediapipe:tasks-vision-facelandmarker:0.10.2")
 }
 
 buildscript {
