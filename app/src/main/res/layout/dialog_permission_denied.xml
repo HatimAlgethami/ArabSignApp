@@ -36,9 +36,10 @@
             android:id="@+id/denied_return_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="الرجوع"
+            android:text="الرجوع إلى الصفحة الرئيسية"
             android:background="@drawable/button_background1"
             android:layout_marginRight="16dp"
+            android:textColor="@color/black"
             >
 
         </androidx.appcompat.widget.AppCompatButton>

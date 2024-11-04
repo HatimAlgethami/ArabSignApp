@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
-    id("com.google.gms.google-services") version "4.3.15"
+    id("com.google.gms.google-services") version "4.4.2"
 }
 
 android {
@@ -31,8 +31,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 
@@ -53,10 +53,10 @@ dependencies {
     implementation(libs.constraintlayout)
 
     // Android CameraX
-    implementation("androidx.camera:camera-core:1.2.0")
-    implementation("androidx.camera:camera-camera2:1.2.0")
-    implementation("androidx.camera:camera-lifecycle:1.2.0")
-    implementation("androidx.camera:camera-view:1.2.0")
+    implementation("androidx.camera:camera-core:1.4.0")
+    implementation("androidx.camera:camera-camera2:1.4.0")
+    implementation("androidx.camera:camera-lifecycle:1.4.0")
+    implementation("androidx.camera:camera-view:1.4.0")
 
     // Navigation and Guava for concurrency
     implementation(libs.navigation.ui)
@@ -67,19 +67,27 @@ dependencies {
     // Kotlin coroutines for Guava
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-guava:1.6.0")
 
+    //json converter
+    implementation("com.google.code.gson:gson:2.11.0")
+
     // Testing libraries
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
+//    // MediaPipe Hands for hand tracking
+//    implementation("com.google.mediapipe:tasks-vision-handlandmarker:0.10.2")
+//
+//    // MediaPipe Pose for body/pose tracking
+//    implementation("com.google.mediapipe:tasks-vision-poselandmarker:0.10.2")
+//
+//    // MediaPipe Face for face tracking
+//    implementation("com.google.mediapipe:tasks-vision-facelandmarker:0.10.2")
 }
 
 buildscript {
     repositories {
         google()
         mavenCentral()
-    }
-    dependencies {
-        classpath("com.google.gms:google-services:4.3.15")
     }
 }

@@ -83,13 +83,13 @@ public class UserMainActivity extends AppCompatActivity implements NavigationBar
         findSelectedFragment(navigationBar_v.getSelectedItemId());
         Fragment fragment;
         switch (selectedFragment){
-            case 2:
+            case 0:
                 fragment = new HomeFragment();
                 break;
             case 1:
                 fragment = new HistoryFragment();
                 break;
-            case 0:
+            case 2:
                 fragment = new ProfileFragment();
                 break;
             default:
