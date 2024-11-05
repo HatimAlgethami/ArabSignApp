@@ -38,39 +38,33 @@
         android:textStyle="bold"
         android:textColor="@color/black"
         android:gravity="center"
-        android:paddingTop="20dp"
-         />
+        android:paddingTop="20dp" />
 
-    <LinearLayout
+    <!-- RadioGroup to ensure only one language selection -->
+    <RadioGroup
+        android:id="@+id/language_radio_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
         android:layout_marginTop="20dp">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/asl_btn"
+        <RadioButton
+            android:id="@+id/asl_radio_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="ASL"
-            android:background="@drawable/button_background1"
             android:textColor="@color/black"
-            android:layout_marginEnd="10dp"
-            />
+            android:layout_marginEnd="10dp" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/arsl_btn"
+        <RadioButton
+            android:id="@+id/arsl_radio_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="ARSL"
-            android:background="@drawable/button_background1"
             android:textColor="@color/black"
-            android:layout_marginEnd="10dp"
-            />
-
-    </LinearLayout>
+            android:layout_marginEnd="10dp" />
+    </RadioGroup>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -87,18 +81,17 @@
             android:text="@string/input_dialog_cancel"
             android:background="@drawable/button_background1"
             android:textColor="@color/black"
-            android:layout_marginEnd="10dp"
-            />
+            android:layout_marginEnd="10dp" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/confirm_button"
-            style="@style/dialogconfirmbutton"
+            android:background="@drawable/button_background1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textStyle="bold"
             android:text="@string/input_dialog_ok"
-            android:textColor="@color/white"
-            />
+            android:textColor="@color/black" />
     </LinearLayout>
 
 </LinearLayout>
