@@ -23,6 +23,7 @@
         android:textColor="#EEEEEEEE"
         android:textSize="30sp" />
     <EditText
+        android:id="@+id/feedbackTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
@@ -35,6 +36,7 @@
         android:textColorHint="#6f6f6f" />
 
     <EditText
+        android:id="@+id/feedbackMessage"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:background="@drawable/message_edit_text"
@@ -45,9 +47,10 @@
         android:padding="10dp"
         android:paddingEnd="40dp"
         android:fontFamily="@font/gothic_a1"
-        android:id="@+id/sign_in_password"/>
+        />
 
     <Button
+        android:id="@+id/sendFeedbackButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="إرسال"

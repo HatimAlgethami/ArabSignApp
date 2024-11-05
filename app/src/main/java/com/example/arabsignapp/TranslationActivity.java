@@ -35,6 +35,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutionException;
@@ -63,12 +64,21 @@ public class TranslationActivity extends AppCompatActivity {
     private Bitmap bitmapImg;
     LinkedHashMap<String,Object> dataMap;
     ByteArrayOutputStream baos;
-    private boolean camAllowed;
-    private int secondscount = 0;
+    private boolean arabic_mode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         newText = false;
+        String selectedLanguage = getIntent().getStringExtra("selectedLanguage");
+        if (selectedLanguage==null){
+            arabic_mode=false;
+        }
+        else if (selectedLanguage.equals("ASL")){
+            arabic_mode=false;
+        }
+        else if (selectedLanguage.equals("ARSL")){
+            arabic_mode=true;
+        }
         super.onCreate(savedInstanceState);
         requestPermission
         = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted->{
@@ -131,8 +141,8 @@ public class TranslationActivity extends AppCompatActivity {
 
     private void requestCamera(){
 
-        camAllowed = ContextCompat.checkSelfPermission(
-                getApplicationContext(),Manifest.permission.CAMERA)
+        boolean camAllowed = ContextCompat.checkSelfPermission(
+                getApplicationContext(), Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED;
         if (camAllowed){
             //initialize variables
@@ -230,13 +240,6 @@ public class TranslationActivity extends AppCompatActivity {
                     translateView.setText(translateText);
                     newText = false;
                 }
-                if (secondscount>999){
-                    secondscount=0;
-                }
-                else{
-                    secondscount+=16;
-                }
-
             } catch (Exception e) {
             }
             handler.postDelayed(runs,16);
@@ -263,7 +266,7 @@ public class TranslationActivity extends AppCompatActivity {
         bitmapImg.compress(Bitmap.CompressFormat.PNG,100,baos);
         String encodedImg = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
         dataMap.put("base64Image",encodedImg);
-        dataMap.put("arabic_mode",false);
+        dataMap.put("arabic_mode",arabic_mode);
         String sentMessage = gson.toJson(dataMap)+'\n';
         outStream.writeBytes(sentMessage);
         outStream.flush();
@@ -323,7 +326,8 @@ public class TranslationActivity extends AppCompatActivity {
         inStream = null;
         try{
             //initialize socket
-            socket = new Socket("localhost",9090);
+            socket = new Socket();
+            socket.connect(new InetSocketAddress("localhost",9090));
             outStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             inStream = new BufferedReader(new InputStreamReader(
                     new BufferedInputStream(socket.getInputStream())));

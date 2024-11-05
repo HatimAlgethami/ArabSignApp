@@ -1,12 +1,25 @@
 package com.example.arabsignapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,5 +73,62 @@ public class sendFeedbackFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_send_feedback, container, false);
+
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        try {
+            Button sendFeedbackButton = getView().findViewById(R.id.sendFeedbackButton);
+            sendFeedbackButton.setOnClickListener(v -> {
+                EditText titleET =getView().findViewById(R.id.feedbackTitle);
+                EditText messageET =getView().findViewById(R.id.feedbackMessage);
+                String title = String.valueOf(titleET.getText());
+                String message = String.valueOf(messageET.getText());
+                if (title.isBlank()){
+                    titleET.setError("Title is required");
+                    titleET.requestFocus();
+                    return;
+                }
+                if (message.isBlank()){
+                    messageET.setError("Message is required");
+                    messageET.requestFocus();
+                    return;
+                }
+                storeFeedbackInDatabase(title,message);
+            });
+        }
+        catch (Exception e){
+
+        }
+
+    }
+
+    private void storeFeedbackInDatabase(String title,String message){
+        FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
+        String userUid;
+        try {
+            userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        }
+        catch (NullPointerException npEx){
+            return;
+        }
+        DocumentReference dr = fsdb.collection("users").document(userUid);
+
+        HashMap<String,Object> feedbackData = new HashMap<>();
+        feedbackData.put("title",title);
+        feedbackData.put("message",message);
+        feedbackData.put("created_at", FieldValue.serverTimestamp());
+        feedbackData.put("user_id",dr);
+        fsdb.collection("feedback")
+                .add(feedbackData)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        getParentFragmentManager().popBackStack();
+                    } else {
+                        Toast.makeText(getContext(), "Something went wrong.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }
