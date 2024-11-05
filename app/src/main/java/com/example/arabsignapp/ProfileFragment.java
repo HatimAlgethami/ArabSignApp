@@ -75,52 +75,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         try {
-            NavigationBarView navigationBar_v =getActivity().findViewById(R.id.nav_view);
-            navigationBar_v.getMenu().findItem(R.id.navigation_profile).setChecked(true);
-            sharedPref = getActivity().getSharedPreferences("appPref",0);
-            //go to feedback activity
-
-//            Button button = getActivity().findViewById(R.id.btn_feedback);
-//            button.setOnClickListener(v -> {
-//                Intent intent = new Intent(getActivity(), Activity.class);
-//                getActivity().startActivity(intent);
-//            });
-            Button button = getView().findViewById(R.id.btn_logout);
-            button.setOnClickListener(v -> {
-                sharedPref.edit().putInt("selectedFragment",2).apply();
-
-                Intent intent = new Intent(getActivity(), LoginCreatAccActivity.class);
-                FirebaseAuth.getInstance().signOut();
-                getActivity().startActivity(intent);
-                getActivity().finish();
-            });
-
-            MaterialSwitch ms = getView().findViewById(R.id.modeswitch);
-            setIsNightMode();
-            ms.setChecked(isNightMode);
-            ms.setOnClickListener((v) -> {
-                int newMode;
-                if (ms.isChecked()){
-                    newMode=AppCompatDelegate.MODE_NIGHT_YES;
-                }
-                else {
-                    newMode=AppCompatDelegate.MODE_NIGHT_NO;
-                }
-                sharedPref.edit().putBoolean("selectedDark",ms.isChecked()).apply();
-//                sharedPref.edit().putBoolean("isRecreated",true).apply();
-                AppCompatDelegate.setDefaultNightMode(newMode);
-
-            });
-            SharedUtils.setUserProfileName(getView().findViewById(R.id.usrnm));
-        }
-
-        catch (NullPointerException ignored){
-
-        }
-
-        //
-
-        try {
             NavigationBarView navigationBar_v = getActivity().findViewById(R.id.nav_view);
             navigationBar_v.getMenu().findItem(R.id.navigation_profile).setChecked(true);
             sharedPref = getActivity().getSharedPreferences("appPref", 0);

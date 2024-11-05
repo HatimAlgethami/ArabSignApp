@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             mAuth = FirebaseAuth.getInstance();
-            Log.d("TAG", ST_email + " " + ST_password);
+//            Log.d("TAG", ST_email + " " + ST_password);
             mAuth.signInWithEmailAndPassword(ST_email, ST_password).addOnCompleteListener(Task -> {
                 if (Task.isSuccessful()) {
                     startActivity(intent);
