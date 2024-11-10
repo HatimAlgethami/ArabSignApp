@@ -63,7 +63,8 @@
             android:layout_height="wrap_content"
             android:text="ARSL"
             android:textColor="@color/black"
-            android:layout_marginEnd="10dp" />
+            android:layout_marginEnd="10dp"
+            />
     </RadioGroup>
 
     <LinearLayout

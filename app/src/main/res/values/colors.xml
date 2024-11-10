@@ -8,6 +8,5 @@
     <color name="transparent">#00000000</color>
     <color name="dialogbackground">#FFFFFFFF</color>
     <color name="dialogborder">#FF000000</color>
-    <color name="green">#FF00FF00</color>
-
+    <color name="green">#FF009900</color>
 </resources>

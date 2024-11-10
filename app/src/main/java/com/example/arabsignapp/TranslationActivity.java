@@ -4,7 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Base64;
@@ -41,8 +41,6 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class TranslationActivity extends AppCompatActivity {
 
@@ -60,12 +58,10 @@ public class TranslationActivity extends AppCompatActivity {
     private Gson gson;
     private boolean newText;
     ExecutorService singleThreadEx;
-    private ScheduledExecutorService socketEx;
     private Bitmap bitmapImg;
     LinkedHashMap<String,Object> dataMap;
     ByteArrayOutputStream baos;
-    private boolean arabic_mode;
-
+    private boolean arabic_mode,lastSocketCallFinished=true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         newText = false;
@@ -147,7 +143,6 @@ public class TranslationActivity extends AppCompatActivity {
         if (camAllowed){
             //initialize variables
             singleThreadEx =Executors.newSingleThreadExecutor();
-            socketEx = Executors.newScheduledThreadPool(2);
             handler = new Handler();
             translateView = findViewById(R.id.translateView);
             gson = new Gson();
@@ -192,8 +187,9 @@ public class TranslationActivity extends AppCompatActivity {
 
             imageAnalysis = new ImageAnalysis.Builder()
                     .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
+                    .setOutputImageRotationEnabled(true)
                     .build();
-            imageAnalysis.setAnalyzer(AsyncTask.THREAD_POOL_EXECUTOR, this::imageAnalyzer);
+            imageAnalysis.setAnalyzer(Executors.newCachedThreadPool(), this::imageAnalyzer);
 
             camProcessProvider.bindToLifecycle(this,camSelector,camPreview,imageAnalysis);
 
@@ -209,7 +205,6 @@ public class TranslationActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        socketEx.shutdownNow();
         closeSocket();
         imageAnalysis.clearAnalyzer();
         handler.removeCallbacks(runs);
@@ -218,16 +213,19 @@ public class TranslationActivity extends AppCompatActivity {
     private void imageAnalyzer(ImageProxy image){
         //send frame to server here (16ms per frame in 60fps according to docs)
         try {
-            if (socket==null||socketEx==null||outStream==null||inStream==null){
+            if (socket==null||outStream==null||inStream==null){
                 image.close();
                 return;
             }
 
             //capture current frame
             bitmapImg = image.toBitmap();
+//            bitmapImg=Bitmap.createBitmap(bitmapImg,0,0,image.getWidth(),image.getHeight()
+//                    ,matrix,false);
+            sendToSocket();
+            respondToSocket();
         }
         catch (Exception e) {
-
         }
         image.close();
     }
@@ -246,32 +244,22 @@ public class TranslationActivity extends AppCompatActivity {
         };
         handler.post(runs);
 
-        //get translation result in a dedicated thread
-        socketEx.scheduleWithFixedDelay(this::respondToSocket,16,16, TimeUnit.MILLISECONDS);
-
-        socketEx.scheduleWithFixedDelay(() -> {
-            try {
-                if (bitmapImg!=null){
-                    //send current frame in a dedicated thread
-                    sendToSocket();
-                }
-            }
-            catch (Exception e){
-
-            }
-        }, 16, 16, TimeUnit.MILLISECONDS);
     }
 
     private void sendToSocket() throws Exception{
-        bitmapImg.compress(Bitmap.CompressFormat.PNG,100,baos);
+        if(!lastSocketCallFinished){
+            return;
+        }
+        bitmapImg.compress(Bitmap.CompressFormat.JPEG,90,baos);
         String encodedImg = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
         dataMap.put("base64Image",encodedImg);
         dataMap.put("arabic_mode",arabic_mode);
-        String sentMessage = gson.toJson(dataMap)+'\n';
+        String sentMessage = gson.toJson(dataMap)+'*';
         outStream.writeBytes(sentMessage);
         outStream.flush();
         baos.reset();
         dataMap.clear();
+        lastSocketCallFinished=false;
     }
 
     private void respondToSocket(){
@@ -279,29 +267,32 @@ public class TranslationActivity extends AppCompatActivity {
             if (!inStream.ready()){
                 return;
             }
+
             String response = inStream.readLine();
             Type mapType = new TypeToken<LinkedHashMap<String, Object>>() {
             }.getType();
             dataMap = gson.fromJson(response, mapType);
-//        String encodedImg = (String)dataMap.get("base64Image");
-//        byte[] bytes = Base64.decode(encodedImg,Base64.DEFAULT);
-//        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-//        return BitmapFactory.decodeStream(bais);
+
+//            String encodedImg = (String)dataMap.get("base64Image");
+//            byte[] bytes = Base64.decode(encodedImg,Base64.DEFAULT);
+//            BitmapFactory.decodeByteArray(bytes,0,bytes.length);
             String prediction,prediction_proba;
             prediction = String.valueOf(dataMap.get("prediction"));
             prediction_proba = String.valueOf(dataMap.get("prediction_proba"));
             dataMap.clear();
             if (prediction.equals("0.0")){
                 translateText="تظهر الترجمة هنا";
-                translateView.setTextColor(getResources().getColor(R.color.white,null));
+                translateView.setTextColor(getResources().getColor(R.color.dialogborder, null));
             }
             else{
                 translateText = "الترجمة: " + prediction + '\n' + "الدقة: " + prediction_proba;
                 translateView.setTextColor(getResources().getColor(R.color.green,null));
             }
             newText = true;
+            lastSocketCallFinished=true;
         }
         catch (Exception e){
+
         }
     }
 
@@ -327,6 +318,8 @@ public class TranslationActivity extends AppCompatActivity {
         try{
             //initialize socket
             socket = new Socket();
+
+            //ENTER IP OF SERVER HERE
             socket.connect(new InetSocketAddress("localhost",9090));
             outStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             inStream = new BufferedReader(new InputStreamReader(
@@ -335,8 +328,25 @@ public class TranslationActivity extends AppCompatActivity {
             baos = new ByteArrayOutputStream();
         }
         catch (Exception e){
-            //means connection failed
-            socket = null;
+//            boolean connected = reconnectToSocket(3);
+//            //means connection failed
+//            if (!connected){
+//                socket = null;
+//            }
+            socket=null;
         }
     }
+
+//    private boolean reconnectToSocket(int connCount){
+//        try{
+//            socket.connect(new InetSocketAddress("localhost",9090));
+//        }
+//        catch (Exception e){
+//            if (connCount<1){
+//                return false;
+//            }
+//            reconnectToSocket(connCount-1);
+//        }
+//        return true;
+//    }
 }

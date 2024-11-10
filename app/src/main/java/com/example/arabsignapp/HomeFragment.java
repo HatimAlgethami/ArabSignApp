@@ -58,6 +58,8 @@ public class HomeFragment extends Fragment {
         RadioGroup languageRadioGroup = eventView.findViewById(R.id.language_radio_group);
         RadioButton aslRadioButton = eventView.findViewById(R.id.asl_radio_button);
         RadioButton arslRadioButton = eventView.findViewById(R.id.arsl_radio_button);
+        arslRadioButton.setChecked(true);
+        selectedLanguage = "ARSL";
 
         languageRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.asl_radio_button) {
