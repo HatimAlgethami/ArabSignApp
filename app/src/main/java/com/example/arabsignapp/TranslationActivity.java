@@ -4,10 +4,10 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -37,6 +37,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -51,7 +52,7 @@ public class TranslationActivity extends AppCompatActivity {
     Handler handler;
     Runnable runs;
     TextView translateView;
-    private String translateText;
+    private String translateText = "";
     private Socket socket;
     private DataOutputStream outStream;
     private BufferedReader inStream;
@@ -62,12 +63,19 @@ public class TranslationActivity extends AppCompatActivity {
     LinkedHashMap<String,Object> dataMap;
     ByteArrayOutputStream baos;
     private boolean arabic_mode,lastSocketCallFinished=true;
+    private long letterStartTime;
+    private long letterCurrentTime;
+    private long wordStartTime;
+    private long wordCurrentTime;
+    private String lastPrediction = "";
+    private ArrayList<String> sentence= new ArrayList<String>();
+    private final LinkedHashMap<String,String> arabicLetters = new LinkedHashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         newText = false;
         String selectedLanguage = getIntent().getStringExtra("selectedLanguage");
         if (selectedLanguage==null){
-            arabic_mode=false;
+            arabic_mode=true;
         }
         else if (selectedLanguage.equals("ASL")){
             arabic_mode=false;
@@ -280,19 +288,31 @@ public class TranslationActivity extends AppCompatActivity {
             prediction = String.valueOf(dataMap.get("prediction"));
             prediction_proba = String.valueOf(dataMap.get("prediction_proba"));
             dataMap.clear();
+            if(translateText.isEmpty()) translateText="تظهر الترجمة هنا";
             if (prediction.equals("0.0")){
-                translateText="تظهر الترجمة هنا";
                 translateView.setTextColor(getResources().getColor(R.color.dialogborder, null));
             }
             else{
-                translateText = "الترجمة: " + prediction + '\n' + "الدقة: " + prediction_proba;
+                if (arabic_mode == true && !prediction.equals("0.0")){
+                    prediction = dictionary(prediction);
+                }
+                String letter=checkLetter(prediction,prediction_proba);
+                if(translateText.equals("تظهر الترجمة هنا")) translateText="";
+                translateText += letter;
                 translateView.setTextColor(getResources().getColor(R.color.green,null));
+            }
+            boolean condition = isWordEnd(prediction);
+            Log.d("CONDITION", String.valueOf(condition));
+            if (condition){
+                sentence.add(translateText);
+                translateText = "";
+                Log.d("SENTENCENEW", sentence.toString());
             }
             newText = true;
             lastSocketCallFinished=true;
         }
         catch (Exception e){
-
+            Log.d("EXC", String.valueOf(e.getStackTrace()[0].getLineNumber()));
         }
     }
 
@@ -320,7 +340,7 @@ public class TranslationActivity extends AppCompatActivity {
             socket = new Socket();
 
             //ENTER IP OF SERVER HERE
-            socket.connect(new InetSocketAddress("localhost",9090));
+            socket.connect(new InetSocketAddress("0.tcp.in.ngrok.io",12494));
             outStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             inStream = new BufferedReader(new InputStreamReader(
                     new BufferedInputStream(socket.getInputStream())));
@@ -349,4 +369,64 @@ public class TranslationActivity extends AppCompatActivity {
 //        }
 //        return true;
 //    }
+    private String checkLetter(String prediction,String prediction_proba){
+        if (!prediction.equals(lastPrediction)) {
+            letterStartTime = System.currentTimeMillis();
+            lastPrediction = prediction;
+        }
+        letterCurrentTime = System.currentTimeMillis();
+        if(letterCurrentTime - letterStartTime >=1500){
+            letterStartTime = letterCurrentTime =0;
+            lastPrediction = "";
+            return prediction;
+        }
+        return "";
+    }
+    private boolean isWordEnd(String prediction){
+        if(!(prediction.equals("0.0")) || translateText.equals("تظهر الترجمة هنا") || translateText.isEmpty()){
+            wordCurrentTime = wordStartTime = System.currentTimeMillis();
+            return false;
+        }
+        wordCurrentTime = System.currentTimeMillis();
+        if(wordCurrentTime - wordStartTime >=5000){
+            wordStartTime = wordCurrentTime =0;
+            return true;
+        }
+        return false;
+    }
+    private String dictionary(String englishLetter){
+        arabicLetters.put("alef", "ا");
+        arabicLetters.put("BAa", "ب");
+        arabicLetters.put("TAa", "ت");
+        arabicLetters.put("tha", "ث");
+        arabicLetters.put("jeem", "ج");
+        arabicLetters.put("7ha", "ح");
+        arabicLetters.put("kha", "خ");
+        arabicLetters.put("Dal", "د");
+        arabicLetters.put("thal", "ذ");
+        arabicLetters.put("Ra", "ر");
+        arabicLetters.put("Zay", "ز");
+        arabicLetters.put("Sin", "س");
+        arabicLetters.put("Shin", "ش");
+        arabicLetters.put("Sad", "ص");
+        arabicLetters.put("Dad", "ض");
+        arabicLetters.put("Ta", "ط");
+        arabicLetters.put("Za", "ظ");
+        arabicLetters.put("Ain", "ع");
+        arabicLetters.put("Ghin", "غ");
+        arabicLetters.put("Fa", "ف");
+        arabicLetters.put("Qaf", "ق");
+        arabicLetters.put("Lam", "ل");
+        arabicLetters.put("Kaf", "ك");
+        arabicLetters.put("Mem", "م");
+        arabicLetters.put("Noon", "ن");
+        arabicLetters.put("Haa", "ه");
+        arabicLetters.put("Waw", "و");
+        arabicLetters.put("ya_maksorh", "ى");
+        arabicLetters.put("Taa_marbotah", "ة");
+        arabicLetters.put("Al", "ا");
+        arabicLetters.put("La", "ل");
+        arabicLetters.put("Yaa", "ي");
+        return arabicLetters.get(englishLetter);
+    }
 }
