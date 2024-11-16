@@ -287,6 +287,8 @@ public class TranslationActivity extends AppCompatActivity {
             String prediction,prediction_proba;
             prediction = String.valueOf(dataMap.get("prediction"));
             prediction_proba = String.valueOf(dataMap.get("prediction_proba"));
+            RemoveLetter(prediction, prediction_proba);
+
             dataMap.clear();
             if(translateText.isEmpty()) translateText="تظهر الترجمة هنا";
             if (prediction.equals("0.0")){
@@ -429,4 +431,18 @@ public class TranslationActivity extends AppCompatActivity {
         arabicLetters.put("Yaa", "ي");
         return arabicLetters.get(englishLetter);
     }
+
+
+
+    private void RemoveLetter(String prediction, String predictionProba) {
+        double accuracy = Double.parseDouble(predictionProba);
+
+        if (accuracy < 0.5) {
+            if (!translateText.isEmpty()) {
+                translateText = translateText.substring(0, translateText.length() - 1);
+            }
+        }
+    }
+
+
 }
