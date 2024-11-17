@@ -17,7 +17,7 @@
 
 
 
-
+<!--
     <Button
         style="@style/button"
         android:id="@+id/createAccountBtn"
@@ -27,9 +27,24 @@
         android:textSize="24sp"
         android:layout_marginTop="24dp"
         />
+-->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/createAccountBtn"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="70dp"
+        android:background="@drawable/gradient_button_ripple"
+        android:fontFamily="@font/sans_arabic_b"
+        android:padding="16dp"
+        android:text="إنشاء حساب"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:letterSpacing="0.1"
+        android:elevation="8dp"
+        />
 
-
-
+<!--
     <Button
         style="@style/button"
         android:id="@+id/loginBtn"
@@ -39,4 +54,21 @@
         android:textSize="24sp"
         android:layout_marginTop="16dp"
         />
+-->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/loginBtn"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/gradient_button_ripple"
+        android:fontFamily="@font/sans_arabic_b"
+        android:padding="16dp"
+        android:text="تسجيل الدخول"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:letterSpacing="0.1"
+        android:elevation="8dp"
+        />
+
 </LinearLayout>
