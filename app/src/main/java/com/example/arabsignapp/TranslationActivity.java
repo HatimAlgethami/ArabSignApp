@@ -358,6 +358,7 @@ public class TranslationActivity extends AppCompatActivity {
 
             //ENTER IP OF SERVER HERE
             socket.connect(new InetSocketAddress("0.tcp.in.ngrok.io",12494));
+
             outStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             inStream = new BufferedReader(new InputStreamReader(
                     new BufferedInputStream(socket.getInputStream())));
@@ -452,11 +453,12 @@ public class TranslationActivity extends AppCompatActivity {
     private void RemoveLetter(String prediction, String predictionProba) {
         double accuracy = Double.parseDouble(predictionProba);
 
-        if (accuracy < 0.5) {
+        if (accuracy < 0.5 && accuracy != 0) {
             if (!translateText.isEmpty()) {
-                translateText = translateText.substring(0, translateText.length() - 1);
+                translateText = translateText.substring(0, translateText.length());
             }
         }
+
     }
 
     private void translateToArabic(String englishWord) {
