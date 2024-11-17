@@ -31,7 +31,21 @@
         android:textSize="24sp"
         android:layout_marginTop="16dp"
         />
-
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/start"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="70dp"
+        android:background="@drawable/gradient_button_ripple"
+        android:fontFamily="@font/sans_arabic_b"
+        android:padding="16dp"
+        android:text="الانتقال الى تسجيل الدخول"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:letterSpacing="0.1"
+        android:elevation="8dp"
+        />
     <ImageView
         style="@style/MainViewStyle"
         android:id="@+id/logo"
