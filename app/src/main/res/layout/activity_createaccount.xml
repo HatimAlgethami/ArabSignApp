@@ -1,80 +1,125 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    style="@style/screenColor"
+    android:fillViewport="true"
     tools:context=".CreateAccountActivity">
 
-    <EditText
-        android:id="@+id/username"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="اسم المستخدم"
-        android:gravity="end"
-        android:padding="10dp"
-        android:layout_marginBottom="16dp"
-        android:textDirection="ltr"
-        android:background="@drawable/border" />
+        android:orientation="vertical"
+        android:padding="16dp"
+        style="@style/screenColor">
 
-    <EditText
-        android:id="@+id/email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="البريد الإلكتروني"
-        android:gravity="end"
-        android:padding="10dp"
-        android:layout_marginBottom="16dp"
-        android:textDirection="ltr"
-        android:background="@drawable/border"
-        android:inputType="textEmailAddress" />
+        <!-- Username -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/usernameInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="اسم المستخدم"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxCornerRadiusTopStart="8dp"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            app:boxCornerRadiusBottomEnd="8dp">
 
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="كلمة المرور"
-        android:gravity="end"
-        android:background="@drawable/border"
-        android:padding="10dp"
-        android:inputType="textPassword"
-        android:layout_marginBottom="16dp" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/sans_arabic_r"
+                android:gravity="start"
+                android:padding="12dp"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
-        android:id="@+id/confirm_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="تأكيد كلمة المرور"
-        android:gravity="end"
-        android:background="@drawable/border"
-        android:padding="10dp"
-        android:inputType="textPassword"
-        android:layout_marginBottom="16dp" />
-<!--
-    <Button
-        style="@style/button"
-        android:id="@+id/createAccountBtn"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="إنشاء حساب"
-        android:textSize="24sp"
-        android:layout_marginTop="16dp" />
-        -->
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/createAccountBtn"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/gradient_button_ripple"
-        android:fontFamily="@font/sans_arabic_b"
-        android:padding="12dp"
-        android:text="إنشاء حساب"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        android:letterSpacing="0.1"
-        android:elevation="8dp"
-        tools:ignore="MissingConstraints" />
-</LinearLayout>
+        <!-- Email -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/emailInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="البريد الإلكتروني"
+            android:layout_marginTop="16dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:endIconMode="clear_text"
+            app:boxCornerRadiusTopStart="8dp"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            app:boxCornerRadiusBottomEnd="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/sans_arabic_r"
+                android:gravity="start"
+                android:padding="12dp"
+                android:inputType="textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Password -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/passwordInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="كلمة المرور"
+            android:layout_marginTop="16dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:endIconMode="password_toggle"
+            app:boxCornerRadiusTopStart="8dp"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            app:boxCornerRadiusBottomEnd="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/sans_arabic_r"
+                android:gravity="start"
+                android:padding="12dp"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Confirm Password -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/confirmPasswordInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="تأكيد كلمة المرور"
+            android:layout_marginTop="16dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:endIconMode="password_toggle"
+            app:boxCornerRadiusTopStart="8dp"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            app:boxCornerRadiusBottomEnd="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/confirm_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/sans_arabic_r"
+                android:gravity="start"
+                android:padding="12dp"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Create Account Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/createAccountBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/gradient_button_ripple"
+            android:fontFamily="@font/sans_arabic_b"
+            android:padding="12dp"
+            android:text="إنشاء حساب"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:letterSpacing="0.1"
+            android:elevation="8dp" />
+    </LinearLayout>
+</ScrollView>

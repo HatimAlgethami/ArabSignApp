@@ -1,52 +1,71 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:fillViewport="true"> <!-- Ensures it takes full available height -->
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
         style="@style/screenColor"
-        tools:context=".loginActivity">
+        tools:context=".LoginActivity">
 
         <!-- Email EditText -->
-        <EditText
-            android:id="@+id/email"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/emailInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="البريد الإلكتروني"
-            android:gravity="end"
-            android:padding="10dp"
-            android:layout_marginBottom="20dp"
-            android:textDirection="ltr"
-            android:background="@drawable/border"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxCornerRadiusTopStart="8dp"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            app:boxCornerRadiusBottomEnd="8dp"
+            app:endIconMode="clear_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.9" />
+            app:layout_constraintWidth_percent="0.9">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:gravity="start"
+                android:padding="12dp" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Password EditText -->
-        <EditText
-            android:id="@+id/password"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/passwordInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="كلمة المرور"
-            android:gravity="end"
-            android:background="@drawable/border"
-            android:padding="10dp"
-            android:inputType="textPassword"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
+            android:hint="كلمة المرور"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxCornerRadiusTopStart="8dp"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            app:boxCornerRadiusBottomEnd="8dp"
+            app:endIconMode="password_toggle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/email"
-            app:layout_constraintWidth_percent="0.9" />
+            app:layout_constraintTop_toBottomOf="@id/emailInputLayout"
+            app:layout_constraintWidth_percent="0.9">
 
-        <!-- Reset Password TextView -->
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:gravity="start"
+                android:padding="12dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Reset Password Button -->
         <Button
             android:id="@+id/reset_password_button"
             android:layout_width="wrap_content"
@@ -54,12 +73,11 @@
             android:text="نسيت كلمة المرور؟"
             android:textSize="18sp"
             android:layout_marginTop="20dp"
-            android:layout_gravity="end"
             android:backgroundTint="@color/white"
             android:textColor="@color/black"
             android:fontFamily="@font/sans_arabic_r"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/password" />
+            app:layout_constraintTop_toBottomOf="@id/passwordInputLayout" />
 
         <!-- Logo ImageView -->
         <ImageView
@@ -74,20 +92,7 @@
             app:layout_constraintTop_toBottomOf="@id/reset_password_button"
             app:layout_constraintBottom_toTopOf="@id/createAccountBtn" />
 
-        <!-- Create Account Button
-        <Button
-            android:id="@+id/createAccountBtn"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:text="تسجيل دخول"
-            android:textSize="24sp"
-            android:layout_marginTop="20dp"
-            style="@style/button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/logo"
-            app:layout_constraintWidth_percent="0.9" />
-        -->
+        <!-- Create Account Button -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/createAccountBtn"
             android:layout_width="350dp"
@@ -104,10 +109,6 @@
             android:elevation="8dp"
             app:layout_constraintTop_toBottomOf="@id/logo"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:ignore="MissingConstraints" />
-
-
+            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </ScrollView>

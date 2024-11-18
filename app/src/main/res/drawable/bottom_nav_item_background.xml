@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Selected item -->
+    <item android:state_checked="true">
+        <layer-list>
+            <!-- Upper border -->
+            <item>
+                <shape android:shape="rectangle">
+                    <size android:height="4dp" />
+                    <solid android:color="#6200EE" /> <!-- Purple border color -->
+                </shape>
+            </item>
+            <!-- Background below the border -->
+            <item android:top="4dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="#FFFFFF" /> <!-- Light purple background -->
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <!-- Default item -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFF" /> <!-- Default white background -->
+        </shape>
+    </item>
+</selector>
