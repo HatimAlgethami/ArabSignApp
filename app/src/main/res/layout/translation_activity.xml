@@ -8,7 +8,7 @@
     android:layoutDirection="rtl"
     android:orientation="vertical"
     tools:context=".TranslationActivity"
-    android:theme="@style/lightdark"
+
     >
 
     <!--    <TextView-->
