@@ -2,6 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Static Colors -->
+    <color name="adaptive_text_color">#000000</color>
     <color name="black">#FF000000</color>
     <color name="mediumblack">#4F4F4F</color>
     <color name="white">#FFFFFFFF</color>
@@ -14,4 +15,7 @@
     <color name="nav_item_color_selected">#FF6200EE</color>
     <color name="nav_item_color_unselected">#000000</color>
 
+    <color name="bottom_nav_background">#FFFFFF</color>
+    <color name="bottom_nav_item_color">#6200EE</color>
+    <color name="bottom_nav_item_unselected_color">#757575</color>
 </resources>
