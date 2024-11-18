@@ -12,16 +12,18 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import android.widget.Toast;
 import com.google.android.material.navigation.NavigationBarView;
 
 public class HomeFragment extends Fragment {
 
     private AlertDialog dialog;
-    private String selectedLanguage;
+    private String selectedLanguage = "ARSL";
 
     public HomeFragment() {
-        // Required empty public constructor
+
     }
 
     public static HomeFragment newInstance() {
@@ -33,18 +35,15 @@ public class HomeFragment extends Fragment {
         return inflater.inflate(R.layout.home_fragment, container, false);
     }
 
-    public void toActivityHm() {
-        if (selectedLanguage == null) {
-            Toast.makeText(getContext(), "Please select a language", Toast.LENGTH_SHORT).show();
-        } else {
-            dialog.dismiss();
-            Intent intent = new Intent(getActivity(), TranslationActivity.class);
-            intent.putExtra("selectedLanguage", selectedLanguage); // Pass the selected language to the activity
-            startActivity(intent);
-        }
+    private void toActivityHm(String chatName) {
+        Intent intent = new Intent(getActivity(), TranslationActivity.class);
+        intent.putExtra("selectedLanguage", selectedLanguage);
+        intent.putExtra("chatName", chatName);
+        startActivity(intent);
+        dialog.dismiss();
     }
 
-    public void returnFromPopupHm() {
+    private void returnFromPopupHm() {
         dialog.dismiss();
     }
 
@@ -55,9 +54,13 @@ public class HomeFragment extends Fragment {
         LayoutInflater inflater = this.getLayoutInflater();
         View eventView = inflater.inflate(R.layout.dialog_input, null);
 
+        // Initialize views
+        TextInputLayout chatNameInputLayout = eventView.findViewById(R.id.chat_name_input_layout);
+        TextInputEditText chatNameInput = eventView.findViewById(R.id.chat_name_input);
         RadioGroup languageRadioGroup = eventView.findViewById(R.id.language_radio_group);
         RadioButton aslRadioButton = eventView.findViewById(R.id.asl_radio_button);
         RadioButton arslRadioButton = eventView.findViewById(R.id.arsl_radio_button);
+
         arslRadioButton.setChecked(true);
         selectedLanguage = "ARSL";
 
@@ -69,7 +72,18 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        eventView.findViewById(R.id.confirm_button).setOnClickListener(v -> toActivityHm());
+        eventView.findViewById(R.id.confirm_button).setOnClickListener(v -> {
+            String chatName = chatNameInput.getText().toString().trim();
+
+            if (chatName.isEmpty()) {
+                chatNameInputLayout.setError("اسم المحادثة مطلوب");
+                chatNameInput.requestFocus();
+            } else {
+                chatNameInputLayout.setError(null);
+                toActivityHm(chatName);
+            }
+        });
+
         eventView.findViewById(R.id.cancel_confirm_button).setOnClickListener(v -> returnFromPopupHm());
 
         builder.setView(eventView);
@@ -80,12 +94,13 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        NavigationBarView navigationBar_v = getActivity().findViewById(R.id.nav_view);
-        navigationBar_v.getMenu().findItem(R.id.navigation_home).setChecked(true);
 
-        Button btn = getView().findViewById(R.id.start);
-        btn.setOnClickListener(v -> popupHm());
+        NavigationBarView navigationBarView = getActivity().findViewById(R.id.nav_view);
+        navigationBarView.getMenu().findItem(R.id.navigation_home).setChecked(true);
 
-        SharedUtils.setUserGreeting(getView().findViewById(R.id.greetingText));
+        Button startButton = view.findViewById(R.id.start);
+        startButton.setOnClickListener(v -> popupHm());
+
+        SharedUtils.setUserGreeting(view.findViewById(R.id.greetingText));
     }
 }

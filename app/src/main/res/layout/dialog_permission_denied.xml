@@ -1,58 +1,65 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingHorizontal="8dp"
-    android:paddingVertical="16dp"
-    android:layout_margin="32dp"
+    app:cardElevation="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardBackgroundColor="#FFFFFF"
     android:layout_gravity="center"
-    android:gravity="end"
-    style="@style/dialogbackground"
-    >
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="20sp"
-        android:fontFamily="@font/gothic_a1"
-        android:textStyle="bold"
-        android:textAlignment="center"
-        android:text="نحتاج للوصول إلى الكاميرا للتعرف على لغة الإشارة"
-        android:paddingBottom="10dp"
-        />
+    android:padding="16dp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal"
-        >
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="16dp"
+        android:gravity="center">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/denied_return_button"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="الرجوع إلى الصفحة الرئيسية"
-            android:background="@drawable/button_background1"
-            android:layout_marginRight="16dp"
-            android:textColor="@color/black"
-            >
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            android:fontFamily="@font/sans_arabic_r"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:text="نحتاج للوصول إلى الكاميرا للتعرف على لغة الإشارة؟"
+            android:textColor="#000000"
+            android:paddingBottom="16dp" />
 
-        </androidx.appcompat.widget.AppCompatButton>
-<!--        <androidx.appcompat.widget.AppCompatButton-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="السماح"-->
-<!--        android:textColor="@color/white"-->
-<!--        android:onClick="reRequestCamera"-->
-<!--        style="@style/dialogconfirmbutton"-->
-<!--        >-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
 
-<!--        </androidx.appcompat.widget.AppCompatButton>-->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/denied_return_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/gradient_button_ripple"
+                android:fontFamily="@font/sans_arabic_r"
+                android:padding="12dp"
+                android:text="الرجوع إلى الصفحة الرئيسية"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:letterSpacing="0.1"
+                android:elevation="8dp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/allow_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/gradient_button_ripple"
+                android:fontFamily="@font/sans_arabic_b"
+                android:padding="12dp"
+                android:text="السماح"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:letterSpacing="0.1"
+                android:elevation="8dp" />
+        </LinearLayout>
     </LinearLayout>
-
-</LinearLayout>
+</androidx.cardview.widget.CardView>

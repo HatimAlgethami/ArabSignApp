@@ -43,6 +43,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-database-ktx:20.3.0")
 
+
     // MediaPipe Vision Tasks (only include what's necessary)
     implementation("com.google.mediapipe:tasks-vision:0.10.2")
 
