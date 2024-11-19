@@ -2,7 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Static Colors -->
-    <color name="adaptive_text_color">#000000</color>
+    <color name="adaptive_text_color">#FFFFFF</color>
     <color name="black">#FF000000</color>
     <color name="mediumblack">#4F4F4F</color>
     <color name="white">#FFFFFFFF</color>

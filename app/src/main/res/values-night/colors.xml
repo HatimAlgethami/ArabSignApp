@@ -2,7 +2,7 @@
 <resources>
     <color name="dialogbackground">#4F4F4F4F</color>
     <color name="dialogborder">#FFFFFFFF</color>
-    <color name="adaptive_text_color">#FFFFFF</color>
+    <color name="adaptive_text_color">#000000</color>
 
     <color name="bottom_nav_background">#121212</color>
     <color name="bottom_nav_item_color">#BB86FC</color>
