@@ -16,9 +16,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/bottom_nav_background"
-        app:itemBackground="@drawable/bottom_nav_item_selector"
         app:itemIconTint="@color/bottom_nav_item_icon_selector"
         app:itemTextColor="@color/bottom_nav_item_icon_selector"
+        app:itemBackground="@drawable/bottom_nav_item_selector"
         app:menu="@menu/bottom_nav_menu" />
 </LinearLayout>
 
@@ -41,5 +41,13 @@
     app:itemBackground="@drawable/bottom_nav_item_background"
     app:labelVisibilityMode="labeled" />
 
-
+<com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bottom_nav_background"
+        app:itemBackground="@drawable/bottom_nav_item_selector"
+        app:itemIconTint="@color/bottom_nav_item_icon_selector"
+        app:itemTextColor="@color/bottom_nav_item_icon_selector"
+        app:menu="@menu/bottom_nav_menu" />
         -->
