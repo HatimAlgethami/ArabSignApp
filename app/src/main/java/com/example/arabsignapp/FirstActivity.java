@@ -43,19 +43,16 @@ public class FirstActivity extends AppCompatActivity {
 
 
 
-        navigateButton = findViewById(R.id.createAccountBtn);
+        navigateButton = findViewById(R.id.start);
 
-        navigateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        navigateButton.setOnClickListener(v -> {
 
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putBoolean("firstLaunch",false).apply();
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean("firstLaunch",false).apply();
 
-                Intent intent = new Intent(FirstActivity.this, LoginCreatAccActivity.class);
-                startActivity(intent);
-                finish();
-            }
+            Intent intent = new Intent(FirstActivity.this, LoginCreatAccActivity.class);
+            startActivity(intent);
+            finish();
         });
     }
 }

@@ -83,7 +83,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.11.0")
 
     // OkHttp for making HTTP requests   Google API
-    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
     // Testing libraries
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

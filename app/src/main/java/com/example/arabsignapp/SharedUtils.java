@@ -18,7 +18,7 @@ public class SharedUtils {
 
                     if (value!=null && value.exists()){
                         CharSequence greeting = value.getString("username");
-                        tv.append(greeting);
+                        tv.append(" "+greeting);
                     }
                 });
     }

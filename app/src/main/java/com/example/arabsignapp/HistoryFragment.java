@@ -5,9 +5,12 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,24 +18,42 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.ListIterator;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link HistoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends Fragment implements DeleteDialog{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    ListView listView;
-    ArrayList<String> itemList;
+    RecyclerView listView;
+    HistoryAdapter adapter;
+    SearchView searchView;
+    ArrayList<String> sessionIdList;
+    ArrayList<String> sessionNameList;
+    CollectionReference reference;
+    DocumentReference ref;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -78,29 +99,109 @@ public class HistoryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         listView = getView().findViewById(R.id.listView);
+        listView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        adapter = new HistoryAdapter(this);
+
+        TextView tv_noData = getView().findViewById(R.id.nodata);
         NavigationBarView navigationBar_v =getActivity().findViewById(R.id.nav_view);
         navigationBar_v.getMenu().findItem(R.id.navigation_chat).setChecked(true);
-        itemList = new ArrayList<>();
-        itemList.add("مقهى الخالدية");
-        itemList.add("مستشفى التخصصي");
-        itemList.add("صيدلية النهدي");
-        itemList.add("مطعم شاورمر");
 
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        reference = firestore.collection("history");
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        ref = firestore.document("users/"+uid);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getView().getContext(), android.R.layout.simple_list_item_1, itemList);
-        listView.setAdapter(adapter);
+        AppCompatButton deleteAll = getView().findViewById(R.id.btn_delete_all);
+        deleteAll.setOnClickListener(v ->
+                new ConfirmDeleteDialog("هل انت متأكد من مسح جميع المحادثات؟",
+                        this,-1).show(getParentFragmentManager(),""));
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                FragmentManager fm = getParentFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.main_view, new DetailsFragment()).addToBackStack("custom");
-                ft.commit();
-                Intent intent = getActivity().getIntent();
-                intent.putExtra("itemName", itemList.get(position));
+        reference.whereEqualTo("user_id",ref).addSnapshotListener((value, error) -> {
+            if (error!=null){
+                return;
+            }
+
+            if (value!=null){
+                sessionIdList = new ArrayList<>();
+                sessionNameList = new ArrayList<>();
+
+                if (value.getDocuments().isEmpty()){
+                    adapter.setNames(new ArrayList<>());
+                    adapter.setSessionIds(new ArrayList<>());
+                    listView.setAdapter(adapter);
+                    deleteAll.setVisibility(View.INVISIBLE);
+                    tv_noData.setText("لا يوجد بيانات");
+                    return;
+                }
+
+                for (QueryDocumentSnapshot doc : value) {
+                    sessionIdList.add(doc.getId());
+                    sessionNameList.add(String.valueOf(doc.get("name")));
+                }
+
+                deleteAll.setVisibility(View.VISIBLE);
+                tv_noData.setText("");
+                try {
+                    adapter.setNames(sessionNameList);
+                    adapter.setSessionIds(sessionIdList);
+                    listView.setAdapter(adapter);
+                }
+                catch (Throwable t){
+                    return;
+                }
             }
         });
 
+        searchView = getView().findViewById(R.id.searchhistory);
+        searchView.clearFocus();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                if (query.isBlank()){
+                    adapter.setNames(sessionNameList);
+                    adapter.setSessionIds(sessionIdList);
+                    listView.setAdapter(adapter);
+                    return false;
+                }
+                searchResults(query);
+                return false;
+            }
+        });
+
+    }
+
+    private void searchResults(String searchText){
+        if (sessionNameList==null||sessionIdList==null){
+            return;
+        }
+        ArrayList<String> filteredSessionNameList = new ArrayList<>();
+        ArrayList<String> filteredSessionIdList = new ArrayList<>();
+        for (int i=0;i<sessionNameList.size();i++){
+            String name = sessionNameList.get(i);
+            if (name.contains(searchText)){
+                filteredSessionNameList.add(name);
+                filteredSessionIdList.add(sessionIdList.get(i));
+            }
+        }
+        adapter.setNames(filteredSessionNameList);
+        adapter.setSessionIds(filteredSessionIdList);
+        listView.setAdapter(adapter);
+    }
+
+    @Override
+    public void deleteItem(int position) {
+        reference.whereEqualTo("user_id",ref).get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots){
+                        doc.getReference().delete();
+                    }
+                }).addOnFailureListener(e -> {
+                    return;
+                });
     }
 }

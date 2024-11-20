@@ -21,6 +21,7 @@ public class HomeFragment extends Fragment {
 
     private AlertDialog dialog;
     private String selectedLanguage = "ARSL";
+    private String sessionInput;
 
     public HomeFragment() {
 

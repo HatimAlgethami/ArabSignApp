@@ -11,9 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
@@ -24,7 +26,15 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -41,6 +51,7 @@ import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -80,12 +91,20 @@ public class TranslationActivity extends AppCompatActivity {
     private long wordStartTime;
     private long wordCurrentTime;
     private String lastPrediction = "";
-    private ArrayList<String> sentence= new ArrayList<String>();
+    private ArrayList<Double> wordAccuracy = new ArrayList<>();
+    private Session session;
+
     private final LinkedHashMap<String,String> arabicLetters = new LinkedHashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         newText = false;
+        String sessionText = getIntent().getStringExtra("chatName");
         String selectedLanguage = getIntent().getStringExtra("selectedLanguage");
+        DocumentReference userRef = FirebaseFirestore.getInstance().collection("users")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        session = new Session(sessionText,new ArrayList<>(),userRef);
+        initDictionary();
         if (selectedLanguage==null){
             arabic_mode=true;
         }
@@ -112,8 +131,18 @@ public class TranslationActivity extends AppCompatActivity {
 
     public void toActivityTsl(){
         dialog.dismiss();
-        Intent intent = new Intent(this,UserMainActivity.class);
-        startActivity(intent);
+            FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
+            fsdb.collection("history")
+                    .add(session)
+                    .addOnSuccessListener(documentReference -> {
+                        finish();
+                        Intent intent = new Intent(this,UserMainActivity.class);
+                        startActivity(intent);
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(getApplicationContext(),"حدث خطأ في حفظ المحادثة",
+                                Toast.LENGTH_SHORT).show();
+                    });
+
     }
 
     public void popupTsl() {
@@ -231,7 +260,7 @@ public class TranslationActivity extends AppCompatActivity {
     }
 
     private void imageAnalyzer(ImageProxy image){
-        //send frame to server here (16ms per frame in 60fps according to docs)
+        //send frame to server here
         try {
             if (socket==null||outStream==null||inStream==null){
                 image.close();
@@ -302,28 +331,33 @@ public class TranslationActivity extends AppCompatActivity {
             RemoveLetter(prediction, prediction_proba);
 
             dataMap.clear();
-            if(translateText.isEmpty()) translateText="تظهر الترجمة هنا";
+//            if(translateText.isEmpty()) translateText="تظهر الترجمة هنا";
             if (prediction.equals("0.0")){
                 translateView.setTextColor(getResources().getColor(R.color.dialogborder, null));
             }
             else{
-                if (arabic_mode == true && !prediction.equals("0.0")){
-                    prediction = dictionary(prediction);
+                if (arabic_mode){
+                    prediction = getArabicLetter(prediction);
                 }
                 String letter=checkLetter(prediction,prediction_proba);
-                if(translateText.equals("تظهر الترجمة هنا")) translateText="";
+//                if(translateText.equals("تظهر الترجمة هنا")) translateText="";
                 translateText += letter;
                 translateView.setTextColor(getResources().getColor(R.color.green,null));
             }
             boolean condition = isWordEnd(prediction);
             Log.d("CONDITION", String.valueOf(condition));
             if (condition){
-                sentence.add(translateText);
+                double averageAccuracy = calculateWordAccuracy(wordAccuracy);
+                double roundedAverageAccuracy=Math.round((averageAccuracy)*10000.0)/100.0;
+                wordAccuracy.clear();
+                String arabicAccuracy = convertAccuracyToArabic(String.valueOf(roundedAverageAccuracy));
                 if (!arabic_mode) {
                     translateToArabic(translateText);
                 }
+                Word word = new Word(translateText,arabicAccuracy);
+                session.getSentence().add(word);
                 translateText = "";
-                Log.d("SENTENCENEW", sentence.toString());
+                Log.d("SENTENCENEW", session.getSentence().toString());
             }
             newText = true;
             lastSocketCallFinished=true;
@@ -357,7 +391,8 @@ public class TranslationActivity extends AppCompatActivity {
             socket = new Socket();
 
             //ENTER IP OF SERVER HERE
-            socket.connect(new InetSocketAddress("0.tcp.in.ngrok.io",12494));
+//            socket.connect(new InetSocketAddress("0.tcp.in.ngrok.io",11272));
+            socket.connect(new InetSocketAddress("localhost",9090));
 
             outStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             inStream = new BufferedReader(new InputStreamReader(
@@ -371,6 +406,7 @@ public class TranslationActivity extends AppCompatActivity {
 //            if (!connected){
 //                socket = null;
 //            }
+            translateView.setText("فشل الاتصال بالترجمة");
             socket=null;
         }
     }
@@ -387,7 +423,12 @@ public class TranslationActivity extends AppCompatActivity {
 //        }
 //        return true;
 //    }
+
     private String checkLetter(String prediction,String prediction_proba){
+        double accuracy =Double.parseDouble(prediction_proba);
+        if (accuracy<0.5){
+            return "";
+        }
         if (!prediction.equals(lastPrediction)) {
             letterStartTime = System.currentTimeMillis();
             lastPrediction = prediction;
@@ -396,6 +437,7 @@ public class TranslationActivity extends AppCompatActivity {
         if(letterCurrentTime - letterStartTime >=1500){
             letterStartTime = letterCurrentTime =0;
             lastPrediction = "";
+            wordAccuracy.add(accuracy);
             return prediction;
         }
         return "";
@@ -412,7 +454,7 @@ public class TranslationActivity extends AppCompatActivity {
         }
         return false;
     }
-    private String dictionary(String englishLetter){
+    private void initDictionary(){
         arabicLetters.put("alef", "ا");
         arabicLetters.put("BAa", "ب");
         arabicLetters.put("TAa", "ت");
@@ -439,12 +481,15 @@ public class TranslationActivity extends AppCompatActivity {
         arabicLetters.put("Mem", "م");
         arabicLetters.put("Noon", "ن");
         arabicLetters.put("Haa", "ه");
-        arabicLetters.put("Waw", "و");
+        arabicLetters.put("waw", "و");
         arabicLetters.put("ya_maksorh", "ى");
         arabicLetters.put("Taa_marbotah", "ة");
-        arabicLetters.put("Al", "ا");
-        arabicLetters.put("La", "ل");
+        arabicLetters.put("Al", "ال");
+        arabicLetters.put("La", "لا");
         arabicLetters.put("Yaa", "ي");
+    }
+
+    private String getArabicLetter(String englishLetter){
         return arabicLetters.get(englishLetter);
     }
 
@@ -519,8 +564,8 @@ public class TranslationActivity extends AppCompatActivity {
 
     }
 
-    private double calculateWordAccuracy(ArrayList<String> wordPredictions, ArrayList<Double> accuracies) {
-        if (wordPredictions.isEmpty() || accuracies.isEmpty() || wordPredictions.size() != accuracies.size()) {
+    private double calculateWordAccuracy(ArrayList<Double> accuracies) {
+        if (translateText.isEmpty() || accuracies.isEmpty() || translateText.length() != accuracies.size()) {
             return 0.0; // Return 0 if data is invalid
         }
 
@@ -532,6 +577,29 @@ public class TranslationActivity extends AppCompatActivity {
         return totalAccuracy / accuracies.size(); // Average accuracy
     }
 
+    private String convertAccuracyToArabic(String numString) {
+        try{
+            Double.parseDouble(numString);
+        }
+        catch (NumberFormatException e){
+            return numString;
+        }
+
+        String arabicNumbers = "٠١٢٣٤٥٦٧٨٩";
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i=0;i<numString.length();i++){
+            if (Character.isDigit(numString.charAt(i))){
+                stringBuilder.append(arabicNumbers.charAt((int)(numString.charAt(i))-48));
+            }
+            else{
+                stringBuilder.append(numString.charAt(i));
+            }
+        }
+
+        return stringBuilder.toString();
+
+    }
 
 
 }
