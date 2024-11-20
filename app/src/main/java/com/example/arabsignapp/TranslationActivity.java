@@ -525,9 +525,10 @@ public class TranslationActivity extends AppCompatActivity {
         }
 
         double totalAccuracy = 0.0;
-        for (double accuracy : accuracies) {
-            totalAccuracy += accuracy;
+        for (int i = 0; i < accuracies.size(); i++) {
+            totalAccuracy += accuracies.get(i);
         }
+
         return totalAccuracy / accuracies.size(); // Average accuracy
     }
 
