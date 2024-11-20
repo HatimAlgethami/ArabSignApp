@@ -454,7 +454,9 @@ public class TranslationActivity extends AppCompatActivity {
         double accuracy = Double.parseDouble(predictionProba);
 
         if (accuracy < 0.5 && accuracy != 0) {
+            //Check for text in translation
             if (!translateText.isEmpty()) {
+                //Delete the last letter using substring
                 translateText = translateText.substring(0, translateText.length());
             }
         }
@@ -462,19 +464,23 @@ public class TranslationActivity extends AppCompatActivity {
     }
 
     private void translateToArabic(String englishWord) {
-        String apiKey = "AIzaSyDtibFl4Vs_DCsRaDtsGlMegtpbn0XbBlY";
-        String url = "https://translation.googleapis.com/language/translate/v2?key=" + apiKey;
+//        String apiKey = getString(R.string.api_key1);
+//        String url = "https://translation.googleapis.com/language/translate/v2?key=" + apiKey;
 
+// the format
         String jsonBody = "{ \"q\": \"" + englishWord + "\", \"source\": \"en\", \"target\": \"ar\", \"format\": \"text\" }";
-
+// the client itself(us)
         OkHttpClient client = new OkHttpClient();
+        //the req
         RequestBody body = RequestBody.create(jsonBody, MediaType.get("application/json; charset=utf-8"));
+       //declare the req
         Request request = new Request.Builder()
-                .url(url)
+//                .url(url)
                 .post(body)
                 .build();
 
-        client.newCall(request).enqueue(new Callback() {
+        client.newCall(request).enqueue(new Callback() { //the req in progress in background
+            // there is error of req
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -483,9 +489,13 @@ public class TranslationActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
+                    //read the req and make it string
                     String responseBody = response.body().string();
+                    //extract the string
                     String translatedText = parseTranslation(responseBody);
+                   // Because we can't update the UI directly from the background, we use
                     runOnUiThread(() -> {
+                        //show the result on UI
                         translateView.setText(translatedText);
                     });
                 }
@@ -508,6 +518,19 @@ public class TranslationActivity extends AppCompatActivity {
 
 
     }
+
+    private double calculateWordAccuracy(ArrayList<String> wordPredictions, ArrayList<Double> accuracies) {
+        if (wordPredictions.isEmpty() || accuracies.isEmpty() || wordPredictions.size() != accuracies.size()) {
+            return 0.0; // Return 0 if data is invalid
+        }
+
+        double totalAccuracy = 0.0;
+        for (double accuracy : accuracies) {
+            totalAccuracy += accuracy;
+        }
+        return totalAccuracy / accuracies.size(); // Average accuracy
+    }
+
 
 
 }

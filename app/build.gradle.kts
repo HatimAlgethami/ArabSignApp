@@ -1,13 +1,24 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
+val myVar1 = gradleLocalProperties(rootDir,providers).getProperty("api_key1", "")
+
 plugins {
+
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services") version "4.4.2"
+
 }
+
+
 
 android {
     namespace = "com.example.arabsignapp"
     compileSdk = 34
 
     defaultConfig {
+
+        resValue("string", "api_key1", "\"$myVar1\"")
+
         applicationId = "com.example.arabsignapp"
         minSdk = 24
         targetSdk = 34
@@ -94,3 +105,5 @@ buildscript {
         mavenCentral()
     }
 }
+
+
