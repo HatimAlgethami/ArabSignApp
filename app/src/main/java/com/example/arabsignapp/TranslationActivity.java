@@ -564,18 +564,7 @@ public class TranslationActivity extends AppCompatActivity {
 
     }
 
-    private double calculateWordAccuracy(ArrayList<Double> accuracies) {
-        if (translateText.isEmpty() || accuracies.isEmpty() || translateText.length() != accuracies.size()) {
-            return 0.0; // Return 0 if data is invalid
-        }
 
-        double totalAccuracy = 0.0;
-        for (int i = 0; i < accuracies.size(); i++) {
-            totalAccuracy += accuracies.get(i);
-        }
-
-        return totalAccuracy / accuracies.size(); // Average accuracy
-    }
 
     private String convertAccuracyToArabic(String numString) {
         try{
@@ -600,6 +589,23 @@ public class TranslationActivity extends AppCompatActivity {
         return stringBuilder.toString();
 
     }
+
+    private double calculateWordAccuracy(ArrayList<Double> accuracies) {
+        if (accuracies.isEmpty()) {
+            return 0.0;
+        }
+
+        double totalAccuracy = 0.0;
+
+        int i = 0;
+        while (i < accuracies.size()) {
+            totalAccuracy += accuracies.get(i);
+            i++;
+        }
+
+        return totalAccuracy / accuracies.size();
+    }
+
 
 
 }
