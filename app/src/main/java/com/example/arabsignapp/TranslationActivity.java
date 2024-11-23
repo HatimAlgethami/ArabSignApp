@@ -54,9 +54,11 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -87,7 +89,7 @@ public class TranslationActivity extends AppCompatActivity {
     LinkedHashMap<String,Object> dataMap;
     ByteArrayOutputStream baos;
     private boolean arabic_mode,lastSocketCallFinished=true;
-    private long letterStartTime;
+    private long letterStartTime = System.currentTimeMillis();;
     private long letterCurrentTime;
     private long wordStartTime;
     private long wordCurrentTime;
@@ -131,6 +133,26 @@ public class TranslationActivity extends AppCompatActivity {
     }
 
     public void toActivityTsl(){
+        if (!translateText.isEmpty()){
+            double averageAccuracy = calculateWordAccuracy(wordAccuracy);
+            double roundedAverageAccuracy=Math.round((averageAccuracy)*10000.0)/100.0;
+            wordAccuracy.clear();
+            String arabicAccuracy = convertAccuracyToArabic(String.valueOf(roundedAverageAccuracy));
+
+            if (!arabic_mode){
+//                ExecutorService serve = Executors.newSingleThreadExecutor();
+                try {
+                    Executors.newSingleThreadExecutor().submit(() ->translateToArabic(translateText, arabicAccuracy)).get();
+                }
+                catch (Exception e){
+                    return;
+                }
+            }
+            else {
+                Word word = new Word(translateText, arabicAccuracy);
+                session.getSentence().add(word);
+            }
+        }
         dialog.dismiss();
             FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
             fsdb.collection("history")
@@ -352,21 +374,19 @@ public class TranslationActivity extends AppCompatActivity {
                 double roundedAverageAccuracy=Math.round((averageAccuracy)*10000.0)/100.0;
                 wordAccuracy.clear();
                 String arabicAccuracy = convertAccuracyToArabic(String.valueOf(roundedAverageAccuracy));
-                if (!arabic_mode && !previouslyTranslated) {
+                if (!previouslyTranslated) {
                     previouslyTranslated = true;
-                    translateToArabic(translateText);
-                }
-                Word word = new Word(translateText,arabicAccuracy);
-                session.getSentence().add(word);
-                runOnUiThread(()->new CountDownTimer(2000,1000){
-                    public void onTick(long millisUntilFinished){
-
+                    if (!arabic_mode){
+                        Executors.newSingleThreadExecutor().submit(() ->translateToArabic(translateText, arabicAccuracy)).get();
                     }
-                    public void onFinish() {
+                    else{
                         previouslyTranslated = false;
-                        translateText = "";
+                        Word word = new Word(translateText,arabicAccuracy);
+                        session.getSentence().add(word);
+                        translateText="";
                     }
-                }.start());
+
+                }
                 Log.d("SENTENCENEW", session.getSentence().toString());
             }
             newText = true;
@@ -401,8 +421,8 @@ public class TranslationActivity extends AppCompatActivity {
             socket = new Socket();
 
             //ENTER IP OF SERVER HERE
-            socket.connect(new InetSocketAddress("0.tcp.in.ngrok.io",13341));
-//            socket.connect(new InetSocketAddress("localhost",9090));
+//            socket.connect(new InetSocketAddress("0.tcp.in.ngrok.io",13341));
+            socket.connect(new InetSocketAddress("localhost",9090));
 
             outStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             inStream = new BufferedReader(new InputStreamReader(
@@ -453,7 +473,7 @@ public class TranslationActivity extends AppCompatActivity {
         return "";
     }
     private boolean isWordEnd(String prediction){
-        if(!(prediction.equals("0.0")) || translateText.equals("تظهر الترجمة هنا") || translateText.isEmpty()){
+        if(!(prediction.equals("0.0"))  || translateText.isEmpty()){
             wordCurrentTime = wordStartTime = System.currentTimeMillis();
             return false;
         }
@@ -491,7 +511,7 @@ public class TranslationActivity extends AppCompatActivity {
         arabicLetters.put("Mem", "م");
         arabicLetters.put("Noon", "ن");
         arabicLetters.put("Haa", "ه");
-        arabicLetters.put("waw", "و");
+        arabicLetters.put("Waw", "و");
         arabicLetters.put("ya_maksorh", "ى");
         arabicLetters.put("Taa_marbotah", "ة");
         arabicLetters.put("Al", "ال");
@@ -518,7 +538,7 @@ public class TranslationActivity extends AppCompatActivity {
 
     }
 
-    private void translateToArabic(String englishWord) {
+    private void translateToArabic(String englishWord,String arabicAccuracy) {
         String apiKey = "";
         String url = "https://translation.googleapis.com/language/translate/v2?key=" + apiKey;
 
@@ -534,47 +554,108 @@ public class TranslationActivity extends AppCompatActivity {
                 .post(body)
                 .build();
 
-        client.newCall(request).enqueue(new Callback() { //the req in progress in background
-            // there is error of req
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    //read the req and make it string
-                    String responseBody = response.body().string();
-                    //extract the string
-                    String translatedText = parseTranslation(responseBody);
-                    Log.d("TRANSLATIONRESULT", translatedText);
-                   // Because we can't update the UI directly from the background, we use
-                    runOnUiThread(() -> {
-                        //show the result on UI
-                        translateView.setText(translatedText);
-                    });
-                }
-                else{
-                    Log.d("OKERROR", response.body().string());
-                }
-            }
-            private String parseTranslation(String responseBody) {
+        try {
+            Response response = client.newCall(request).execute();
+            if (response.isSuccessful()) {
+                //read the req and make it string
+                String responseBody = response.body().string();
+                //extract the string
+                String translatedText;
                 try {
                     JSONObject jsonObject = new JSONObject(responseBody);
 
-                    return jsonObject.getJSONObject("data")
+                    translatedText = jsonObject.getJSONObject("data")
                             .getJSONArray("translations")
                             .getJSONObject(0)
                             .getString("translatedText");
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return "Error in translation";
+                    translatedText = "Error in translation";
                 }
+                Log.d("TRANSLATIONRESULT", translatedText);
+
+                translateText = translatedText;
+
+                Word word = new Word(translateText, arabicAccuracy);
+                session.getSentence().add(word);
+
+                runOnUiThread(() -> {
+                    translateView.setText(translateText);
+                });
+
+
+                runOnUiThread(() -> new CountDownTimer(2000, 2000) {
+                    public void onTick(long millisUntilFinished) {
+
+                    }
+
+                    public void onFinish() {
+                        previouslyTranslated = false;
+                        translateText = "";
+                    }
+                }.start());
+            }
+            else {
+                Log.d("OKERROR", response.body().string());
             }
 
-        });
 
+//                client.newCall(request).enqueue(new Callback() { //the req in progress in background
+//                    // there is error of req
+//                    @Override
+//                    public void onFailure(Call call, IOException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    @Override
+//                    public void onResponse(Call call, Response response) throws IOException {
+//                        if (response.isSuccessful()) {
+//                            //read the req and make it string
+//                            String responseBody = response.body().string();
+//                            //extract the string
+//                            String translatedText = parseTranslation(responseBody);
+//                            Log.d("TRANSLATIONRESULT", translatedText);
+//                            // Because we can't update the UI directly from the background, we use
+//                            runOnUiThread(() -> {
+//                                //show the result on UI
+//                                translateText = translatedText;
+//                            });
+//                            runOnUiThread(() -> new CountDownTimer(2000, 2000) {
+//                                public void onTick(long millisUntilFinished) {
+//
+//                                }
+//
+//                                public void onFinish() {
+//                                    previouslyTranslated = false;
+//                                    Word word = new Word(translatedText, arabicAccuracy);
+//                                    session.getSentence().add(word);
+//                                    translateText = "";
+//                                }
+//                            }.start());
+//                        } else {
+//                            Log.d("OKERROR", response.body().string());
+//                        }
+//                    }
+//
+//                    private String parseTranslation(String responseBody) {
+//                        try {
+//                            JSONObject jsonObject = new JSONObject(responseBody);
+//
+//                            return jsonObject.getJSONObject("data")
+//                                    .getJSONArray("translations")
+//                                    .getJSONObject(0)
+//                                    .getString("translatedText");
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                            return "Error in translation";
+//                        }
+//                    }
+//
+//                });
+        }
+        catch (Exception e){
+
+        }
 
     }
 
