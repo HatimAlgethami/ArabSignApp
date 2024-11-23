@@ -18,7 +18,7 @@
             android:id="@+id/dialog_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="فضلًا، يرجى إدخال اسم المحادثة"
+            android:text="فضلًا، يرجى إدخال اسم الجلسة"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="#000000"

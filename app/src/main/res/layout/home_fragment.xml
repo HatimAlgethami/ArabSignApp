@@ -75,12 +75,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="Welcome "
+                    android:text="مرحبًا "
                     android:textSize="24sp"
                     android:textColor="@color/adaptive_text_color"
                     android:fontFamily="@font/sans_arabic_b"
                     android:gravity="center"
                     android:padding="16dp" />
+
 
                 <ImageView
                     android:id="@+id/greetingIcon"
@@ -110,7 +111,7 @@
             android:background="@drawable/gradient_button_ripple"
             android:fontFamily="@font/sans_arabic_b"
             android:padding="16dp"
-            android:text="محادثة جديدة"
+            android:text="جلسة جديدة"
             android:textColor="#FFFFFF"
             android:textSize="24sp"
             android:letterSpacing="0.1"

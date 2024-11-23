@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/sans_arabic_r"
-            android:text="تطبيق ArabSign تم تطويره لمساعدة مجتمع الصم من خلال ترجمة لغة الإشارة العربية (ArSL) ولغة الإشارة الأمريكية (ASL) إلى اللغة العربية المنطوقة والمكتوبة باستخدام نظام التعرف على الإيماءات من خلال الكاميرا."
+            android:text="تطبيق ArabSign تم تطويره لمساعدة مجتمع الصم من خلال التعرف على حروف لغة الإشارة العربية (ArSL) ولغة الإشارة الأمريكية (ASL) باستخدام نظام التعرف على الإيماءات من خلال الكاميرا."
             android:textSize="16sp"
             android:layout_marginTop="8dp" />
 
@@ -58,7 +58,7 @@
             android:layout_width="wrap_content"
             android:fontFamily="@font/sans_arabic_r"
             android:layout_height="wrap_content"
-            android:text="يساعد هذا التطبيق في سد فجوة التواصل لدى مجتمع الصم من خلال ترجمة الإيماءات الخاصة بهم إلى اللغة العربية المنطوقة في الوقت الفعلي، مما يسمح لهم بالتواصل مع من لا يفهمون لغة الإشارة."
+            android:text="يساعد هذا التطبيق في سد فجوة التواصل لدى مجتمع الصم من خلال توفير نظام للتعرف على حروف لغة الإشارة بدقة في الوقت الفعلي، مما يعزز من فرص التعلم والتواصل."
             android:textSize="16sp"
             android:layout_marginTop="8dp" />
 
@@ -66,7 +66,6 @@
             android:id="@+id/question3"
             android:layout_width="wrap_content"
             android:fontFamily="@font/sans_arabic_r"
-
             android:layout_height="wrap_content"
             android:text="ما هو الفرق بين ASL و ArSL؟"
             android:textSize="18sp"
@@ -78,19 +77,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/sans_arabic_r"
-            android:text="لغة الإشارة الأمريكية (ASL) هي لغة الإشارة المستخدمة في الولايات المتحدة وأجزاء من كندا، بينما تستخدم لغة الإشارة العربية (ArSL) في مجتمع الصم الناطقين باللغة العربية. يقوم تطبيق ArabSign بترجمة كل من ASL و ArSL إلى اللغة العربية المكتوبة والمنطوقة."
+            android:text="لغة الإشارة الأمريكية (ASL) هي لغة الإشارة المستخدمة في الولايات المتحدة وأجزاء من كندا، بينما تستخدم لغة الإشارة العربية (ArSL) في مجتمع الصم الناطقين باللغة العربية. يقوم تطبيق ArabSign بالتعرف على حروف كل من ASL و ArSL بدقة لتحسين التعلم والتواصل."
             android:textSize="16sp"
             android:layout_marginTop="8dp" />
-<!--
-        <Button
-            style="@style/button"
-            android:id="@+id/createAccountBtn"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="الانتقال الى تسجيل الدخول"
-            android:textSize="24sp"
-            android:layout_marginTop="16dp" />
-        -->
+
+        <!--
+                <Button
+                    style="@style/button"
+                    android:id="@+id/createAccountBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:text="الانتقال الى تسجيل الدخول"
+                    android:textSize="24sp"
+                    android:layout_marginTop="16dp" />
+                -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/start"
             android:layout_width="400dp"
