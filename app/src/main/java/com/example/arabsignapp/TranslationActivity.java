@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Base64;
 import android.util.Log;
@@ -93,7 +94,7 @@ public class TranslationActivity extends AppCompatActivity {
     private String lastPrediction = "";
     private ArrayList<Double> wordAccuracy = new ArrayList<>();
     private Session session;
-
+    private boolean previouslyTranslated = false;
     private final LinkedHashMap<String,String> arabicLetters = new LinkedHashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -351,12 +352,21 @@ public class TranslationActivity extends AppCompatActivity {
                 double roundedAverageAccuracy=Math.round((averageAccuracy)*10000.0)/100.0;
                 wordAccuracy.clear();
                 String arabicAccuracy = convertAccuracyToArabic(String.valueOf(roundedAverageAccuracy));
-                if (!arabic_mode) {
+                if (!arabic_mode && !previouslyTranslated) {
+                    previouslyTranslated = true;
                     translateToArabic(translateText);
                 }
                 Word word = new Word(translateText,arabicAccuracy);
                 session.getSentence().add(word);
-                translateText = "";
+                runOnUiThread(()->new CountDownTimer(2000,1000){
+                    public void onTick(long millisUntilFinished){
+
+                    }
+                    public void onFinish() {
+                        previouslyTranslated = false;
+                        translateText = "";
+                    }
+                }.start());
                 Log.d("SENTENCENEW", session.getSentence().toString());
             }
             newText = true;
@@ -391,8 +401,8 @@ public class TranslationActivity extends AppCompatActivity {
             socket = new Socket();
 
             //ENTER IP OF SERVER HERE
-//            socket.connect(new InetSocketAddress("0.tcp.in.ngrok.io",11272));
-            socket.connect(new InetSocketAddress("localhost",9090));
+            socket.connect(new InetSocketAddress("0.tcp.in.ngrok.io",13341));
+//            socket.connect(new InetSocketAddress("localhost",9090));
 
             outStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             inStream = new BufferedReader(new InputStreamReader(
@@ -509,8 +519,8 @@ public class TranslationActivity extends AppCompatActivity {
     }
 
     private void translateToArabic(String englishWord) {
-//        String apiKey = getString(R.string.api_key1);
-//        String url = "https://translation.googleapis.com/language/translate/v2?key=" + apiKey;
+        String apiKey = "";
+        String url = "https://translation.googleapis.com/language/translate/v2?key=" + apiKey;
 
 // the format
         String jsonBody = "{ \"q\": \"" + englishWord + "\", \"source\": \"en\", \"target\": \"ar\", \"format\": \"text\" }";
@@ -520,7 +530,7 @@ public class TranslationActivity extends AppCompatActivity {
         RequestBody body = RequestBody.create(jsonBody, MediaType.get("application/json; charset=utf-8"));
        //declare the req
         Request request = new Request.Builder()
-//                .url(url)
+                .url(url)
                 .post(body)
                 .build();
 
@@ -538,11 +548,15 @@ public class TranslationActivity extends AppCompatActivity {
                     String responseBody = response.body().string();
                     //extract the string
                     String translatedText = parseTranslation(responseBody);
+                    Log.d("TRANSLATIONRESULT", translatedText);
                    // Because we can't update the UI directly from the background, we use
                     runOnUiThread(() -> {
                         //show the result on UI
                         translateView.setText(translatedText);
                     });
+                }
+                else{
+                    Log.d("OKERROR", response.body().string());
                 }
             }
             private String parseTranslation(String responseBody) {
