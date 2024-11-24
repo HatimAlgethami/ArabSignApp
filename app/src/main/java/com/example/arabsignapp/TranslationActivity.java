@@ -19,6 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
@@ -75,6 +76,7 @@ public class TranslationActivity extends AppCompatActivity {
     private ActivityResultLauncher<String> requestPermission;
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     ImageAnalysis imageAnalysis;
+    Camera cam;
     Handler handler;
     Runnable runs;
     TextView translateView;
@@ -263,7 +265,20 @@ public class TranslationActivity extends AppCompatActivity {
                     .build();
             imageAnalysis.setAnalyzer(Executors.newCachedThreadPool(), this::imageAnalyzer);
 
-            camProcessProvider.bindToLifecycle(this,camSelector,camPreview,imageAnalysis);
+            cam = camProcessProvider.bindToLifecycle(this,camSelector,camPreview,imageAnalysis);
+
+            findViewById(R.id.rotateCamButton).setOnClickListener(v -> {
+                int facing = cam.getCameraInfo().getLensFacing();
+                CameraSelector cameraSelector = cam.getCameraInfo().getCameraSelector();
+                if (facing==CameraSelector.LENS_FACING_FRONT){
+                    cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
+                }
+                else if (facing==CameraSelector.LENS_FACING_BACK){
+                    cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA;
+                }
+                camProcessProvider.unbindAll();
+                cam = camProcessProvider.bindToLifecycle(this,cameraSelector,camPreview,imageAnalysis);
+            });
 
             if (socket!=null){
                 createTranslationEvents();
