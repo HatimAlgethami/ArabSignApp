@@ -3,7 +3,6 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 val myVar1 = gradleLocalProperties(rootDir,providers).getProperty("api_key1", "")
 
 plugins {
-
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services") version "4.4.2"
 
@@ -50,13 +49,9 @@ android {
 dependencies {
     // Firebase dependencies
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
-    implementation("com.google.firebase:firebase-firestore-ktx:24.0.0")
+    implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-database-ktx:20.3.0")
-
-
-    // MediaPipe Vision Tasks (only include what's necessary)
-    implementation("com.google.mediapipe:tasks-vision:0.10.2")
+    implementation("com.google.firebase:firebase-database-ktx")
 
     // Android libraries and UI components
     implementation(libs.appcompat)
@@ -89,15 +84,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-
-//    // MediaPipe Hands for hand tracking
-//    implementation("com.google.mediapipe:tasks-vision-handlandmarker:0.10.2")
-//
-//    // MediaPipe Pose for body/pose tracking
-//    implementation("com.google.mediapipe:tasks-vision-poselandmarker:0.10.2")
-//
-//    // MediaPipe Face for face tracking
-//    implementation("com.google.mediapipe:tasks-vision-facelandmarker:0.10.2")
 }
 
 buildscript {
