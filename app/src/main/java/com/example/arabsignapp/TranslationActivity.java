@@ -79,7 +79,7 @@ public class TranslationActivity extends AppCompatActivity {
     TextView translateView;
     private String translateText = "";
     private Socket socket;
-    private String serverName = "192.168.0.144";
+    private String serverName = "";
     private int serverPort = 9090;
     private DataOutputStream outStream;
     private BufferedReader inStream;
@@ -94,9 +94,10 @@ public class TranslationActivity extends AppCompatActivity {
     private long letterCurrentTime;
     private long wordStartTime;
     private long wordCurrentTime;
-    private String lastPrediction = "";
+    private String lastPrediction = null;
     private ArrayList<Double> wordAccuracy = new ArrayList<>();
     private Session session;
+    private boolean previouslyTranslated = false;
     private final LinkedHashMap<String,String> arabicLetters = new LinkedHashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,13 +135,26 @@ public class TranslationActivity extends AppCompatActivity {
 
     public void toActivityTsl(){
         if (!translateText.isEmpty()){
+            translateText=translateText.substring(0,translateText.length()-1);
             double averageAccuracy = calculateWordAccuracy(wordAccuracy);
             double roundedAverageAccuracy=Math.round((averageAccuracy)*10000.0)/100.0;
             wordAccuracy.clear();
             String arabicAccuracy = convertAccuracyToArabic(String.valueOf(roundedAverageAccuracy));
+            translateText = translateText.replace(" ","");
 
-            Word word = new Word(translateText, arabicAccuracy);
-            session.getSentence().add(word);
+            if (!arabic_mode){
+                try {
+                    Executors.newSingleThreadExecutor().submit(() ->
+                            translateToArabic(translateText.replace(" ",""), arabicAccuracy)).get();
+                }
+                catch (Exception e){
+                    return;
+                }
+            }
+            else {
+                Word word = new Word(translateText, arabicAccuracy);
+                session.getSentence().add(word);
+            }
         }
         dialog.dismiss();
             FirebaseFirestore fsdb = FirebaseFirestore.getInstance();
@@ -345,10 +359,9 @@ public class TranslationActivity extends AppCompatActivity {
             }.getType();
             dataMap = gson.fromJson(response, mapType);
 
-            String prediction,prediction_proba;
-            prediction = String.valueOf(dataMap.get("prediction"));
-            prediction_proba = String.valueOf(dataMap.get("prediction_proba"));
-            RemoveLetter(prediction, prediction_proba);
+            String prediction = String.valueOf(dataMap.get("prediction"));
+            String prediction_proba = String.valueOf(dataMap.get("prediction_proba"));
+//            RemoveLetter(prediction, prediction_proba);
 
             dataMap.clear();
             if (prediction.equals("0.0")){
@@ -365,13 +378,24 @@ public class TranslationActivity extends AppCompatActivity {
             boolean condition = isWordEnd(prediction);
             Log.d("CONDITION", String.valueOf(condition));
             if (condition){
+                translateText=translateText.substring(0,translateText.length()-1);
                 double averageAccuracy = calculateWordAccuracy(wordAccuracy);
                 double roundedAverageAccuracy=Math.round((averageAccuracy)*10000.0)/100.0;
                 wordAccuracy.clear();
                 String arabicAccuracy = convertAccuracyToArabic(String.valueOf(roundedAverageAccuracy));
-                Word word = new Word(translateText,arabicAccuracy);
-                session.getSentence().add(word);
-                translateText = "";
+                if (!previouslyTranslated) {
+                    previouslyTranslated = true;
+                    translateText = translateText.replace(" ","");
+                    if (!arabic_mode) {
+                        Executors.newSingleThreadExecutor().submit(() -> translateToArabic(
+                                translateText, arabicAccuracy)).get();
+                    } else {
+                        previouslyTranslated = false;
+                        Word word = new Word(translateText, arabicAccuracy);
+                        session.getSentence().add(word);
+                        translateText = "";
+                    }
+                }
 
                 Log.d("SENTENCENEW", session.getSentence().toString());
             }
@@ -429,11 +453,11 @@ public class TranslationActivity extends AppCompatActivity {
             lastPrediction = prediction;
         }
         letterCurrentTime = System.currentTimeMillis();
-        if(letterCurrentTime - letterStartTime >=1500){
+        if(letterCurrentTime - letterStartTime >= 1500){
             letterStartTime = letterCurrentTime =0;
             lastPrediction = "";
             wordAccuracy.add(accuracy);
-            return prediction;
+            return prediction + " ";
         }
         return "";
     }
@@ -449,6 +473,7 @@ public class TranslationActivity extends AppCompatActivity {
         }
         return false;
     }
+
     private void initDictionary(){
         arabicLetters.put("alef", "ا");
         arabicLetters.put("BAa", "ب");
@@ -487,7 +512,6 @@ public class TranslationActivity extends AppCompatActivity {
     private String getArabicLetter(String englishLetter){
         return arabicLetters.get(englishLetter);
     }
-
 
 
     private void RemoveLetter(String prediction, String predictionProba) {
@@ -543,73 +567,74 @@ public class TranslationActivity extends AppCompatActivity {
         return totalAccuracy / accuracies.size();
     }
 
-}
 
 
-//    private void translateToArabic(String englishWord,String arabicAccuracy) {
-//        String apiKey = "";
-//        String url = "https://translation.googleapis.com/language/translate/v2?key=" + apiKey;
-//
-//// the format
-//        String jsonBody = "{ \"q\": \"" + englishWord + "\", \"source\": \"en\", \"target\": \"ar\", \"format\": \"text\" }";
-//// the client itself(us)
-//        OkHttpClient client = new OkHttpClient();
-//        //the req
-//        RequestBody body = RequestBody.create(jsonBody, MediaType.get("application/json; charset=utf-8"));
-//       //declare the req
-//        Request request = new Request.Builder()
-//                .url(url)
-//                .post(body)
-//                .build();
-//
-//        try {
-//            Response response = client.newCall(request).execute();
-//            if (response.isSuccessful()) {
-//                //read the req and make it string
-//                String responseBody = response.body().string();
-//                //extract the string
-//                String translatedText;
-//                try {
-//                    JSONObject jsonObject = new JSONObject(responseBody);
-//
-//                    translatedText = jsonObject.getJSONObject("data")
-//                            .getJSONArray("translations")
-//                            .getJSONObject(0)
-//                            .getString("translatedText");
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    translatedText = "Error in translation";
-//                }
-//                Log.d("TRANSLATIONRESULT", translatedText);
-//
-//                translateText = translatedText;
-//
-//                Word word = new Word(translateText, arabicAccuracy);
-//                session.getSentence().add(word);
-//
+
+    private void translateToArabic(String englishWord,String arabicAccuracy) {
+        String apiKey = "";
+        String url = "https://translation.googleapis.com/language/translate/v2?key=" + apiKey;
+
+// the format
+        String jsonBody = "{ \"q\": \"" + englishWord + "\", \"source\": \"en\", \"target\": \"ar\", \"format\": \"text\" }";
+// the client itself(us)
+        OkHttpClient client = new OkHttpClient();
+        //the req
+        RequestBody body = RequestBody.create(jsonBody, MediaType.get("application/json; charset=utf-8"));
+       //declare the req
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            if (response.isSuccessful()) {
+                //read the req and make it string
+                String responseBody = response.body().string();
+                //extract the string
+                String translatedText;
+                try {
+                    JSONObject jsonObject = new JSONObject(responseBody);
+
+                    translatedText = jsonObject.getJSONObject("data")
+                            .getJSONArray("translations")
+                            .getJSONObject(0)
+                            .getString("translatedText");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    translatedText = "Error in translation";
+                }
+                Log.d("TRANSLATIONRESULT", translatedText);
+
+                translateText = translatedText;
+
+                Word word = new Word(translateText, arabicAccuracy);
+                session.getSentence().add(word);
+
 //                runOnUiThread(() -> {
 //                    translateView.setText(translateText);
 //                });
-//
-//
-//                runOnUiThread(() -> new CountDownTimer(2000, 2000) {
-//                    public void onTick(long millisUntilFinished) {
-//
-//                    }
-//
-//                    public void onFinish() {
-//                        previouslyTranslated = false;
-//                        translateText = "";
-//                    }
-//                }.start());
-//            }
-//            else {
-//                Log.d("OKERROR", response.body().string());
-//            }
-//
-//        }
-//        catch (Exception e){
-//
-//        }
-//
-//    }
+
+
+                runOnUiThread(() -> new CountDownTimer(2000, 500) {
+                    public void onTick(long millisUntilFinished) {
+
+                    }
+
+                    public void onFinish() {
+                        previouslyTranslated = false;
+                        translateText = "";
+                    }
+                }.start());
+            }
+            else {
+                Log.d("OKERROR", response.body().string());
+            }
+
+        }
+        catch (Exception e){
+
+        }
+
+    }
+}
