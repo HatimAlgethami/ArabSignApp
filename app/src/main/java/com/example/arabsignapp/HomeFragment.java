@@ -77,7 +77,7 @@ public class HomeFragment extends Fragment {
             String chatName = chatNameInput.getText().toString().trim();
 
             if (chatName.isEmpty()) {
-                chatNameInputLayout.setError("اسم المحادثة مطلوب");
+                chatNameInputLayout.setError("اسم الجلسة مطلوب");
                 chatNameInput.requestFocus();
             } else {
                 chatNameInputLayout.setError(null);

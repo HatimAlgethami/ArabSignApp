@@ -41,7 +41,7 @@
                 android:id="@+id/chat_name_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="اسم المحادثة"
+                android:hint="اسم الجلسة"
                 android:padding="12dp"
                 android:fontFamily="@font/sans_arabic_r"
                 android:textColorHint="#9E9E9E"
