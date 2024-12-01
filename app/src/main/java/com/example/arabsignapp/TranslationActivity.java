@@ -79,8 +79,8 @@ public class TranslationActivity extends AppCompatActivity {
     TextView translateView;
     private String translateText = "";
     private Socket socket;
-    private String serverName = "";
-    private int serverPort = 9090;
+    private String serverName = "0.tcp.in.ngrok.io";
+    private int serverPort = 13560;
     private DataOutputStream outStream;
     private BufferedReader inStream;
     private Gson gson;
@@ -476,37 +476,37 @@ public class TranslationActivity extends AppCompatActivity {
 
     private void initDictionary(){
         arabicLetters.put("alef", "ا");
-        arabicLetters.put("BAa", "ب");
-        arabicLetters.put("TAa", "ت");
+        arabicLetters.put("baA", "ب");
+        arabicLetters.put("ta", "ت");
         arabicLetters.put("tha", "ث");
         arabicLetters.put("jeem", "ج");
-        arabicLetters.put("7ha", "ح");
+        arabicLetters.put("ha", "ح");
         arabicLetters.put("kha", "خ");
-        arabicLetters.put("Dal", "د");
-        arabicLetters.put("thal", "ذ");
-        arabicLetters.put("Ra", "ر");
-        arabicLetters.put("Zay", "ز");
-        arabicLetters.put("Sin", "س");
-        arabicLetters.put("Shin", "ش");
-        arabicLetters.put("Sad", "ص");
-        arabicLetters.put("Dad", "ض");
-        arabicLetters.put("Ta", "ط");
-        arabicLetters.put("Za", "ظ");
-        arabicLetters.put("Ain", "ع");
-        arabicLetters.put("Ghin", "غ");
+        arabicLetters.put("dhal", "ذ");
+        arabicLetters.put("ra", "ر");
+        arabicLetters.put("zay", "ز");
+        arabicLetters.put("sin", "س");
+        arabicLetters.put("shin", "ش");
+        arabicLetters.put("sad", "ص");
+        arabicLetters.put("dad", "ض");
+        arabicLetters.put("tta", "ط");
+        arabicLetters.put("za", "ظ");
+        arabicLetters.put("ayn", "ع");
+        arabicLetters.put("ghayn", "غ");
+        arabicLetters.put("qaf", "ق");
+        arabicLetters.put("kaf", "ك");
+        arabicLetters.put("lam", "ل");
+        arabicLetters.put("mem", "م");
+        arabicLetters.put("non", "ن");
+        arabicLetters.put("haA", "ه");
+        arabicLetters.put("wow", "و");
+        arabicLetters.put("yaA", "ي");
         arabicLetters.put("Fa", "ف");
-        arabicLetters.put("Qaf", "ق");
-        arabicLetters.put("Lam", "ل");
-        arabicLetters.put("Kaf", "ك");
-        arabicLetters.put("Mem", "م");
-        arabicLetters.put("Noon", "ن");
-        arabicLetters.put("Haa", "ه");
-        arabicLetters.put("Waw", "و");
-        arabicLetters.put("ya_maksorh", "ى");
-        arabicLetters.put("Taa_marbotah", "ة");
-        arabicLetters.put("Al", "ال");
-        arabicLetters.put("La", "لا");
-        arabicLetters.put("Yaa", "ي");
+        arabicLetters.put("dal", "د");
+        arabicLetters.put("ya_maqsora", "ى");
+        arabicLetters.put("ta_marbotah", "ة");
+        arabicLetters.put("al", "ال");
+        arabicLetters.put("la", "لا");
     }
 
     private String getArabicLetter(String englishLetter){
@@ -571,9 +571,7 @@ public class TranslationActivity extends AppCompatActivity {
 
 
     private void translateToArabic(String englishWord,String arabicAccuracy) {
-
-    try {
-        String apiKey = getString(R.string.api_key1);
+        String apiKey = "";
         String url = "https://translation.googleapis.com/language/translate/v2?key=" + apiKey;
 
 // the format
@@ -633,10 +631,10 @@ public class TranslationActivity extends AppCompatActivity {
             } else {
                 Log.d("OKERROR", response.body().string());
             }
-        }
 
-    }
+        }
         catch (Exception e){
+
         }
 
     }
