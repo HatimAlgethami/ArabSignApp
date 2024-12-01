@@ -75,7 +75,7 @@
         >
 
     </TextView>
-<!--
+
     <Button
         android:id="@+id/conv_end"
         style="@style/fancybutton"
@@ -88,21 +88,21 @@
         android:text="@string/conv_end"
         android:textSize="40sp">
     </Button>
--->
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/conv_end"
-        android:layout_width="400dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/gradient_button_ripple"
-        android:fontFamily="@font/sans_arabic_b"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginBottom="20dp"
-        android:padding="16dp"
-        android:text="إنهاء"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        android:letterSpacing="0.1"
-        android:elevation="8dp"
-        />
+
+<!--    <androidx.appcompat.widget.AppCompatButton-->
+<!--        android:id="@+id/conv_end"-->
+<!--        android:layout_width="400dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:background="@drawable/gradient_button_ripple"-->
+<!--        android:fontFamily="@font/sans_arabic_b"-->
+<!--        android:layout_marginHorizontal="32dp"-->
+<!--        android:layout_marginBottom="20dp"-->
+<!--        android:padding="16dp"-->
+<!--        android:text="إنهاء"-->
+<!--        android:textColor="#FFFFFF"-->
+<!--        android:textSize="24sp"-->
+<!--        android:letterSpacing="0.1"-->
+<!--        android:elevation="8dp"-->
+<!--        />-->
 </LinearLayout>

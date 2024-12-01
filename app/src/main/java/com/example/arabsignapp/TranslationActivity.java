@@ -165,7 +165,7 @@ public class TranslationActivity extends AppCompatActivity {
                         Intent intent = new Intent(this,UserMainActivity.class);
                         startActivity(intent);
                     }).addOnFailureListener(e -> {
-                        Toast.makeText(getApplicationContext(),"حدث خطأ في حفظ المحادثة",
+                        Toast.makeText(getApplicationContext(),"حدث خطأ في حفظ الجلسة",
                                 Toast.LENGTH_SHORT).show();
                     });
 
@@ -571,7 +571,9 @@ public class TranslationActivity extends AppCompatActivity {
 
 
     private void translateToArabic(String englishWord,String arabicAccuracy) {
-        String apiKey = "";
+
+    try {
+        String apiKey = getString(R.string.api_key1);
         String url = "https://translation.googleapis.com/language/translate/v2?key=" + apiKey;
 
 // the format
@@ -586,8 +588,7 @@ public class TranslationActivity extends AppCompatActivity {
                 .post(body)
                 .build();
 
-        try {
-            Response response = client.newCall(request).execute();
+        try (Response response = client.newCall(request).execute()) {
             if (response.isSuccessful()) {
                 //read the req and make it string
                 String responseBody = response.body().string();
@@ -626,14 +627,16 @@ public class TranslationActivity extends AppCompatActivity {
                         translateText = "";
                     }
                 }.start());
-            }
-            else {
+            } else if (response.code() > 400) {
+                Word word = new Word(translateText, arabicAccuracy);
+                session.getSentence().add(word);
+            } else {
                 Log.d("OKERROR", response.body().string());
             }
-
         }
-        catch (Exception e){
 
+    }
+        catch (Exception e){
         }
 
     }

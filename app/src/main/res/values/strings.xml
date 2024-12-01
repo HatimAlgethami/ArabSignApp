@@ -2,7 +2,7 @@
     <string name="app_name">ArabSign</string>
     <string name="title_activity_home">HomeActivity</string>
 
-    <string name="conv_end">إنهاء المحادثة</string>
+    <string name="conv_end">إنهاء</string>
     <string name="title_translate">الترجمة</string>
     <string name="translation_default">جاري التحميل</string>
     <string name="camera_default">تظهر الكاميرا هنا</string>
@@ -18,7 +18,7 @@
     <string name="title_home">الرئيسية</string>
     <string name="title_chat">المحادثات</string>
     <string name="title_profile">الملف الشخصي</string>
-    <string name="start">بدء المحادثة</string>
+    <string name="start">بدء</string>
     <string name="Greeting">مرحبا</string>
 
     <string name="title_activity_history">HistoryActivity</string>
